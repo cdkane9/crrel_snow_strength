@@ -13,7 +13,7 @@ better_cols = [
 ]
 def ram_scrubber(id, ram_path):
     '''
-    calculates ram number and ram resitance and exports to .csv
+    calculates ram number and ram resistance and exports to .csv
     :param id: pit ID, SITE_YYYYMMDD
     :param ram_path: directory
     :return: none, exports to folder

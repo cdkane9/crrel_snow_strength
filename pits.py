@@ -45,7 +45,7 @@ strat_cols = [
 ]
 
 
-def pit_scrubber(pit_path):
+def pit_scrubber(pit_path, id):
     '''
     reads in a pat to a pit sheet.  pulls out different data types and exports to .csv
     :param pit_path: path to pit
@@ -62,7 +62,7 @@ def pit_scrubber(pit_path):
 
 
     #pull out header data
-    pit_id = poo["Location (Regional Scale)"][5]
+    pit_id = id
     hs = float(poo.iloc[5, 4]) # snow depth
     open_t = poo.iloc[3,6] # time pit opened
     utme = poo.iloc[5,8] # UTM easting
