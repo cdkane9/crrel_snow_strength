@@ -58,6 +58,6 @@ def ram_scrubber(id, ram_path):
     #directory to export
     export_path = '/Users/colemankane/Desktop/crrel_exports'
 
-    export.to_csv(f'{export_path}/{id}.csv', index=False)
+    export.to_csv(f'{export_path}/{id}_ram.csv', index=False)
 
     return
