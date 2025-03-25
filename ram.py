@@ -3,13 +3,13 @@ import pandas as pd
 
 
 better_cols = [
-    't', # tube mass
-    'h', #hammer mass
+    't (kg)', # tube mass
+    'h (kg)', #hammer mass
     'n', # number of falls
-    'f', # fall height
-    'l', # location of point
-    'p', # penetration
-    'hag', # height above ground
+    'f (cm)', # fall height
+    'l (cm)', # location of point
+    'p (cm)', # penetration
+    'hag (cm)', # height above ground
 ]
 def ram_scrubber(id, ram_path):
     '''
