@@ -28,10 +28,11 @@ def matrix_scrubber(matrix_path, id):
     fram = get_index('Force_Std_Ram')
     scope = get_index('SnowScope')
 
-    export_path = '/Users/colemankane/Desktop/crrel_exports'
-    smp.to_csv(f'{export_path}/{id}_smp.csv', index=False)
-    fscope.to_csv(f'{export_path}/{id}_fscope.csv', index=False)
-    fram.to_csv(f'{export_path}/{id}_fram.csv', index=False)
+    #export_path = '/Users/colemankane/Desktop/crrel_exports'
+    export_path = '/Users/colemankane/Desktop/flakesense'
+    #smp.to_csv(f'{export_path}/{id}_smp.csv', index=False)
+    #fscope.to_csv(f'{export_path}/{id}_fscope.csv', index=False)
+    #fram.to_csv(f'{export_path}/{id}_fram.csv', index=False)
     scope.to_csv(f'{export_path}/{id}_scope.csv', index=False)
 
 
