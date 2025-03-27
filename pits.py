@@ -51,7 +51,7 @@ def pit_scrubber(pit_path, id):
     :param pit_path: path to pit
     :return: .csv of strat, LWC, density, temp, header
     '''
-
+    print(id)
     sheet = pd.read_excel(pit_path,
                           skiprows=1,
                           sheet_name=['PIT'])
