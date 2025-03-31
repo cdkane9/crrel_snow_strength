@@ -90,10 +90,12 @@ def interpolate_oed(rho_i, ref_i, k):
     return ssa
 
 
-cols = ['hag', 'density', 'reflect', 'ssa']
+cols = ['hag', 'density', 'reflect', 'ssa', 'oed']
 conv_ssa = []
 for i in range(len(ref_a)):
-    conv_ssa.append([den['top'][i], den_avg[i], ref_a[i], interpolate_oed(den_avg[i], ref_a[i], k=1.119)])
+    conv_ssa.append([den['top'][i], den_avg[i], ref_a[i],
+                     interpolate_oed(den_avg[i], ref_a[i], k=1.119),
+                     6 / interpolate_oed(den_avg[i], ref_a[i], k=1.119)])
 
 ssa_ar = pd.DataFrame(conv_ssa, columns=cols)
 print(ssa_ar)
