@@ -4,7 +4,7 @@ import numpy as np
 header_cols = [
     'Pit ID',#
     'Time pit open',#
-    'Snow depth',#
+    'Snow depth (cm)',#
     'UTME',#
     'UTMN',#
     'UTM zone',#
@@ -15,11 +15,11 @@ header_cols = [
 ]
 
 density_cols = [
-    'top',
-    'bottom',
-    'A',
-    'B',
-    'C',
+    'top (cm)',
+    'bottom (cm)',
+    'A (kg/m3)',
+    'B (kg/m3)',
+    'C (kg/m3)',
 ] # will add BulkA, BulkB, SWEA, SWEB later
 
 LWC_cols = [
@@ -35,9 +35,9 @@ temp_cols = [
 strat_cols = [
     'top (cm)',
     'bottom (cm)',
-    'grain max',
-    'grain min',
-    'grain avg',
+    'grain max (mm)',
+    'grain min (mm)',
+    'grain avg (mm)',
     'type',
     'HH',
     'wetness',
@@ -129,7 +129,7 @@ def pit_scrubber(pit_path, id):
         weighted = den[profile] * weights
         bulk_den = np.nansum(weighted) / hs
         swe = bulk_den * hs / 1000
-        return bulk_den, swe
+        return bulk_den, swe * 10
 
 
     #dealing with density profile that does not extend to ground
@@ -154,7 +154,7 @@ def pit_scrubber(pit_path, id):
 
     #den.to_csv(f'{export_path}/{pit_id}_den.csv', index=False)
     #temp.to_csv(f'{export_path}/{pit_id}_temp.csv', index=False)
-    strat.to_csv(f'/Users/colemankane/Desktop/flakesense/{pit_id}_strat.csv', index=False)
+    #strat.to_csv(f'/Users/colemankane/Desktop/flakesense/{pit_id}_strat.csv', index=False)
     #strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
     #header.to_csv(f'{export_path}/{pit_id}_header.csv', index=False)
     #perm.to_csv(f'{export_path}/{pit_id}_perm.csv', index=False)
