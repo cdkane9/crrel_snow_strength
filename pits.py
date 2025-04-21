@@ -12,20 +12,20 @@ header_cols = [
     'Temp end',#
     'LWC', #
     'comments'
-]
+] #ADD DATE COLUMN, state, site,
 
 density_cols = [
-    'top (cm)',
-    'bottom (cm)',
-    'A (kg/m3)',
-    'B (kg/m3)',
-    'C (kg/m3)',
+    'top',
+    'bottom',
+    'A',
+    'B',
+    'C',
 ] # will add BulkA, BulkB, SWEA, SWEB later
 
 LWC_cols = [
     'PermA',
     'PermB',
-]
+] # add device and SN here
 
 temp_cols = [
     'height (cm)',

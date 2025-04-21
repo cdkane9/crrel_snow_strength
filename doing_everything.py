@@ -57,6 +57,10 @@ pram_lst = [i for i in pram_lst if i]
 ssa_lst = [i for i in ssa_lst if i]
 
 
+    
+for i in sram_lst:
+    ram_scrubber(i[0], i[1])
+'''
 for i in matrix_lst:
     matrix_scrubber(i[0], i[1])
 
@@ -65,7 +69,7 @@ for i in pit_lst:
 
 
 
-'''
+
 site = 'FRE'
 date = '20241210'
 id = f'{site}_{date}'

@@ -3,15 +3,15 @@ import pandas as pd
 
 
 better_cols = [
-    't (kg)', # tube mass
-    'h (kg)', #hammer mass
+    't', # tube mass
+    'h', #hammer mass
     'n', # number of falls
-    'f (cm)', # fall height
-    'l (cm)', # location of point
-    'p (cm)', # penetration
-    'hag (cm)', # height above ground
+    'f', # fall height
+    'l', # location of point
+    'p', # penetration
+    'hag', # height above ground
 ]
-def ram_scrubber(id, ram_path):
+def ram_scrubber(ram_path, id):
     '''
     calculates ram number and ram resistance and exports to .csv
     :param id: pit ID, SITE_YYYYMMDD

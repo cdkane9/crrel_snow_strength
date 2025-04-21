@@ -100,5 +100,5 @@ for i in range(len(ref_a)):
 ssa_ar = pd.DataFrame(conv_ssa, columns=cols)
 print(ssa_ar)
 
-plt.scatter(ssa_ar['reflect'] * 100, ssa_ar['ssa'])
+plt.scatter(ssa_ar['density'] * 100, ssa_ar['ssa'])
 plt.show()
