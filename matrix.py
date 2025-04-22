@@ -45,10 +45,11 @@ def matrix_scrubber(matrix_path, id):
         profile_path = f'{scope_path}/{find_profile}'
         profile = pd.read_csv(profile_path, skiprows=24)
         fscope.loc[i, 'max_pressure'] = np.max(profile['hardness (kPa)'])
+        fscope.loc[i, 'id'] = id
 
     ##############################################
     ram_path = '/Users/colemankane/Desktop/crrel_exports/'
-    print(id)
+
     fram = get_index('Force_Std_Ram')
     if not fram.empty:
         depth = fram['Depth_m']
@@ -57,6 +58,7 @@ def matrix_scrubber(matrix_path, id):
             sram = sram[sram['l'] < 80]
             max_rr = np.nanmax(sram['rr'])
             fram['max_rr'] = max_rr
+            fram['id'] = id
     else:
         pass
 
@@ -68,7 +70,7 @@ def matrix_scrubber(matrix_path, id):
     export_path = '/Users/colemankane/Desktop/crrel_exports'
     #export_path = '/Users/colemankane/Desktop/flakesense'
     #smp.to_csv(f'{export_path}/{id}_smp.csv', index=False)
-    #fscope.to_csv(f'{export_path}/{id}_fscope.csv', index=False)
+    fscope.to_csv(f'{export_path}/{id}_fscope.csv', index=False)
     fram.to_csv(f'{export_path}/{id}_fram.csv', index=False)
     #scope.to_csv(f'{export_path}/{id}_scope.csv', index=False)
 

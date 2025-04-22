@@ -59,8 +59,8 @@ ssa_lst = [i for i in ssa_lst if i]
 
 
     
-for i in sram_lst:
-    ram_scrubber(i[0], i[1]) # MUST run ram_scrubber before matrix scrubber
+#for i in sram_lst:
+#    ram_scrubber(i[0], i[1]) # MUST run ram_scrubber before matrix scrubber
 
 for i in matrix_lst:
     matrix_scrubber(i[0], i[1])
