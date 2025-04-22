@@ -50,6 +50,7 @@ for state in state:
                 ssa_lst.append([f'{file_path}/{ssa}', f'{site}_{date}'])
 
 
+
 matrix_lst = [i for i in matrix_lst if i]
 pit_lst = [i for i in pit_lst if i]
 sram_lst = [i for i in sram_lst if i]
@@ -58,28 +59,14 @@ ssa_lst = [i for i in ssa_lst if i]
 
 
     
-#for i in sram_lst:
-#    ram_scrubber(i[0], i[1])
+for i in sram_lst:
+    ram_scrubber(i[0], i[1]) # MUST run ram_scrubber before matrix scrubber
 
 for i in matrix_lst:
     matrix_scrubber(i[0], i[1])
+
+
 '''
 for i in pit_lst:
     pit_scrubber(i[0], i[1])
-
-
-
-
-site = 'FRE'
-date = '20241210'
-id = f'{site}_{date}'
-
-pit_path = f'/Users/colemankane/Documents/BSU/CRREL Snow Strength/snow_strength_cleaning/Freeman/{date}/{id}_pit.xlsx'
-pit_scrubber(pit_path, id)
-
-#ram_path = f'/Users/colemankane/Documents/BSU/CRREL Snow Strength/snow_strength_cleaning/Freeman/{date}/{id}_sram.xlsx'
-#ram_scrubber(id, ram_path)
-
-mat_path = f'/Users/colemankane/Documents/BSU/CRREL Snow Strength/snow_strength_cleaning/Freeman/{date}/{id}_matrix.xlsx'
-matrix_scrubber(mat_path, id)
 '''
