@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 site_name = 'Freeman'
-site_raw = pd.read_csv(f'{site_name}_15Min.dat',
+site_raw = pd.read_csv(f'wx_stations/{site_name}_15Min.dat',
                        on_bad_lines='skip',
                        delimiter=',',
                        low_memory=False,
