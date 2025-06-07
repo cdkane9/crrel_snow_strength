@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
 
+
 # read in dirty wx_station data
 file_path = '/Users/colemankane/Desktop/crrel_exports/wx_stations/Brundage_15min_dirty.csv'
 caca = pd.read_csv(file_path)
@@ -28,6 +29,10 @@ snotel['hs'] = snotel['hs'][sno_ix] # filter
 snotel['swe'] *= 25.4 # convert swe to mm
 sno_dt = pd.to_datetime(snotel['Date'] + ' ' + snotel['Time']) # convert to date time
 snotel.set_index(sno_dt, inplace=True)
+snotel = snotel.resample('15min').interpolate() # resample to match time step of study plot
+
+
+
 
 # filter out big jumps in data wx station data
 diff = caca['hs_cm'].diff().abs()
@@ -44,49 +49,55 @@ caca.loc[hs_start:hs_end, 'flag'] = 1
 
 '''Establish relationship between bdg reservoir snotel and bdg site'''
 '''Can make somewhat accurate predictions about bdg site to fill data gaps'''
+# define timestamps of gap
+sgap = pd.Timestamp("2025-03-23 09:15:00")
+egap = pd.Timestamp('2025-04-12 13:30:00')
 
-# resample wx station to hourly timesteps
-caca_hr = caca.resample('h').mean()
+# add in missing dates
+full_idx = pd.date_range(
+    start=caca.index.min(),
+    end=caca.index.max(),
+    freq='15min',
+)
+caca = caca.reindex(full_idx).interpolate(method='index')
 
 
 # align two datasets on common indices
-aligned = caca_hr.join(snotel, how='inner', lsuffix='_df1', rsuffix='_df2')
-common_index = caca_hr.index.intersection(snotel.index)
-hr_aln = caca_hr.loc[common_index]
+aligned = caca.join(snotel, how='inner', lsuffix='caca', rsuffix='snotel')
+common_index = caca.index.intersection(snotel.index)
+caca_aln = caca.loc[common_index]
 stl_aln = snotel.loc[common_index]
 
 # subset where both datasets are not nan
-mask = np.isfinite(hr_aln['hs_cm']) & np.isfinite(stl_aln['hs'])
-hr_aln = hr_aln[mask]
+mask = np.isfinite(caca_aln['hs_cm']) & np.isfinite(stl_aln['hs'])
+caca_aln = caca_aln[mask]
 stl_aln = stl_aln[mask]
 
-#determine how closely related two sites are
-m, b = np.polyfit(stl_aln['hs'], hr_aln['hs_cm'], 1) # use m as coefficient for scaling up snotel data
-rmse = np.sqrt(mean_squared_error(hr_aln['hs_cm'], m * stl_aln['hs'] + b))
 
-
-# fill two week gap end of march
-sgap = pd.Timestamp("2025-03-23 09:00:00")
-egap = pd.Timestamp('2025-04-12 17:00:00')
-
-# determine difference between site and snotel on either end of the gap
-start_gap = caca_hr.loc[sgap, 'hs_cm'] - snotel.loc[sgap, 'hs']
-end_gap = caca_hr.loc[egap, 'hs_cm'] - snotel.loc[egap, 'hs']
+# determine differnce between site and snotel on either end of gap
+start_gap = caca_aln.loc[sgap, 'hs_cm'] - snotel.loc[sgap, 'hs']
+end_gap = caca_aln.loc[egap, 'hs_cm'] - snotel.loc[egap, 'hs']
 avg_diff = (start_gap + end_gap) / 2
+
+
+# define model to go from snotel HS to site HS
+m,b = np.polyfit(stl_aln['hs'], caca_aln['hs_cm'],1)
+rmse = np.sqrt(mean_squared_error(caca_aln['hs_cm'],
+                                   stl_aln['hs'] + b))
 
 # fill gap
 stl_fill = snotel[(snotel.index >= sgap) & (snotel.index < egap)].copy()
-fill = (m * stl_fill['hs'] + avg_diff).resample('15min').interpolate()
+fill = (m * stl_fill['hs'] + start_gap)
 
-caca_hr.loc[sgap:egap, 'hs_cm'] = fill
-caca_hr.loc[sgap:egap, 'flag'] = 1
+caca.loc[sgap:egap, 'hs_cm'] = fill
+caca.loc[sgap:egap, 'flag'] = 1
 
-plt.plot(caca_hr['hs_cm'])
-plt.plot(caca_hr['flag'])
+plt.plot(caca['hs_cm'])
+plt.plot(snotel['hs'])
+plt.plot(caca['flag'] * 10)
 plt.show()
-'''
-snotel.to_csv('/Users/colemankane/Desktop/bg_snotel.csv')
-caca_hr.to_csv('/Users/colemankane/Desktop/bg_caca.csv')'''
+
+
 
 
 
