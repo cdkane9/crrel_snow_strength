@@ -70,8 +70,8 @@ def matrix_scrubber(matrix_path, id):
     export_path = '/Users/colemankane/Desktop/crrel_exports'
     #export_path = '/Users/colemankane/Desktop/flakesense'
     #smp.to_csv(f'{export_path}/{id}_smp.csv', index=False)
-    fscope.to_csv(f'{export_path}/{id}_fscope.csv', index=False)
-    fram.to_csv(f'{export_path}/{id}_fram.csv', index=False)
+    #fscope.to_csv(f'{export_path}/{id}_fscope.csv', index=False)
+    #fram.to_csv(f'{export_path}/{id}_fram.csv', index=False)
     #scope.to_csv(f'{export_path}/{id}_scope.csv', index=False)
 
 

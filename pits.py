@@ -152,10 +152,10 @@ def pit_scrubber(pit_path, id):
     #export all data frames to .csv
     export_path = '/Users/colemankane/Desktop/crrel_exports'
 
-    #den.to_csv(f'{export_path}/{pit_id}_den.csv', index=False)
+    den.to_csv(f'{export_path}/{pit_id}_den.csv', index=False)
     #temp.to_csv(f'{export_path}/{pit_id}_temp.csv', index=False)
     #strat.to_csv(f'/Users/colemankane/Desktop/flakesense/{pit_id}_strat.csv', index=False)
-    #strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
+    strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
     #header.to_csv(f'{export_path}/{pit_id}_header.csv', index=False)
     #perm.to_csv(f'{export_path}/{pit_id}_perm.csv', index=False)
 

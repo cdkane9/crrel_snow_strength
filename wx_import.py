@@ -18,6 +18,7 @@ if site_name == 'Brundage':
     site_wdir = site_raw['WindDir_SD1_WVT'].astype(float)
     site_swe = site_raw['SS_SWE_Avg'].astype(float)
     site_rh = site_raw['RH'].astype(float)
+    #site_dist = site_raw['SnoDAR_distance_Avg'].astype(float)
     site = {'date': site_date,
             'hs_cm': site_hs,
             'swe_mm': site_swe,
@@ -25,6 +26,7 @@ if site_name == 'Brundage':
             'rh': site_rh,
             'wspd_mps': site_ws,
             'wdir': site_wdir,
+            #'dist': site_dist
             }
 
 elif site_name == 'Freeman':
@@ -34,6 +36,7 @@ elif site_name == 'Freeman':
     site_temp = site_raw['Temp_C_Avg'].astype(float)
     site_ws = site_raw['WS_ms_S_WVT'].astype(float)
     site_wdir = site_raw['WindDir_SD1_WVT'].astype(float)
+    site_dist = site_raw['SnoDAR_distance_Avg'].astype(float)
     site_rh = site_raw['RH'].astype(float)
     site = {'date': site_date,
             'hs_cm': site_hs,
@@ -41,7 +44,7 @@ elif site_name == 'Freeman':
             'rh': site_rh,
             'wspd_mps': site_ws,
             'wdir': site_wdir,
-            }
+            'dist': site_dist}
 
 elif site_name == 'Bogus':
     site_raw_dt = site_raw['TIMESTAMP']
@@ -61,7 +64,11 @@ site = pd.DataFrame(site)
 site = site[(site['date'] >= '2024-10-01 00:00:00')]
 site = site.set_index('date')
 
-site.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/{site_name}_15min_dirty.csv')
+plt.plot(site['hs_cm'] / 100)
+plt.plot(site['dist'])
+plt.show()
+
+#site.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/{site_name}_15min_dirty.csv')
 
 
 
