@@ -3,7 +3,7 @@ import numpy as np
 import os
 from pits import pit_scrubber
 from ram import ram_scrubber
-from matrix import matrix_scrubber
+#from matrix import matrix_scrubber
 
 state = ['Colorado', 'Idaho', 'Wyoming']
 data_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/snow_strength_cleaning/20250325_testing'
@@ -51,20 +51,22 @@ for state in state:
 
 
 
-matrix_lst = [i for i in matrix_lst if i]
+#matrix_lst = [i for i in matrix_lst if i]
 pit_lst = [i for i in pit_lst if i]
-sram_lst = [i for i in sram_lst if i]
-pram_lst = [i for i in pram_lst if i]
-ssa_lst = [i for i in ssa_lst if i]
+#sram_lst = [i for i in sram_lst if i]
+#pram_lst = [i for i in pram_lst if i]
+#ssa_lst = [i for i in ssa_lst if i]
 
 
     
 #for i in sram_lst:
 #    ram_scrubber(i[0], i[1]) # MUST run ram_scrubber before matrix scrubber
 
-for i in matrix_lst:
-    matrix_scrubber(i[0], i[1])
+#for i in matrix_lst:
+#    matrix_scrubber(i[0], i[1])
 
+for i in pit_lst:
+    pit_scrubber(i[0], i[1])
 
 '''
 for i in pit_lst:
