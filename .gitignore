@@ -1,6 +1,14 @@
 .idea/
 .DS_Store
 crrelsnowstrength-ad63ab401736.json
+*.xlsx
+*.csv
+.PNT
+.jpeg
+.JPG
+.docx
+.gitignore
+
 
 
 # Byte-compiled / optimized / DLL files
