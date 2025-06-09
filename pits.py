@@ -4,7 +4,7 @@ import numpy as np
 header_cols = [
     'Pit ID',#
     'Time pit open',#
-    'Snow depth (cm)',#
+    'Snow depth_cm',#
     'UTME',#
     'UTMN',#
     'UTM zone',#
@@ -15,11 +15,11 @@ header_cols = [
 ] #ADD DATE COLUMN, state, site,
 
 density_cols = [
-    'top',
-    'bottom',
-    'A',
-    'B',
-    'C',
+    'top_cm',
+    'bottom_cm',
+    'A_kgm-3',
+    'B_kgm-3',
+    'C_kgm-3',
 ] # will add BulkA, BulkB, SWEA, SWEB later
 
 LWC_cols = [
@@ -28,16 +28,16 @@ LWC_cols = [
 ] # add device and SN here
 
 temp_cols = [
-    'height (cm)',
-    'temp (C)'
+    'height_cm',
+    'temp_C'
 ]
 
 strat_cols = [
-    'top (cm)',
-    'bottom (cm)',
-    'grain max (mm)',
-    'grain min (mm)',
-    'grain avg (mm)',
+    'top_cm',
+    'bottom_cm',
+    'grain max_mm',
+    'grain min_mm',
+    'grain avg_mm',
     'type',
     'HH',
     'wetness',
@@ -108,16 +108,19 @@ def pit_scrubber(pit_path, id):
     strat.columns = strat_cols
 
 
+
     # pull out density profiles
     bottom_col = poo.iloc[9:, 2] # column with height of the bottom of each density sample
     first_na = bottom_col.isna().idxmax()  # index of the first instance of NaN, extent of density measurements
+
+
 
     #subset of density measurements (top, bottom, denA, denB, denC)
     den = poo.iloc[9:first_na, 0:6]
     den = den.drop(den.columns[1], axis=1).reset_index(drop=True) # drop column with '-' between top and bottom
     den.columns = density_cols # add column names
     den = den.astype(float)
-    den[['BulkA', 'BulkB', 'SWEA', 'SWEB']] = np.nan # add placeholder columns for bulk density and SWE
+    den[['BulkA_kgm-3', 'BulkB_kgm-3', 'SWEA_mm', 'SWEB_mm']] = np.nan # add placeholder columns for bulk density and SWE
 
     def calc_bulk(profile):
         '''
@@ -125,37 +128,38 @@ def pit_scrubber(pit_path, id):
         :param profile: A or B
         :return: bulk density, swe
         '''
-        weights = den['top'] - den['bottom']
+        weights = den['top_cm'] - den['bottom_cm']
         weighted = den[profile] * weights
-        bulk_den = np.nansum(weighted) / hs
-        swe = bulk_den * hs / 1000
+        bulk_den = round(np.nansum(weighted) / hs, 0)
+        swe = round(bulk_den * hs / 1000, 1)
         return bulk_den, swe * 10
 
 
     #dealing with density profile that does not extend to ground
     den.iloc[-1, 1] = 0 # change bottom of last measurement to 0
-    den.iloc[-1, 0] = den.iloc[-2, 1] # change top of last measurement to bottom of second to last measurement
+    if first_na != 10: # in case one density measurement was made from surface to ground
+        den.iloc[-1, 0] = den.iloc[-2, 1] # change top of last measurement to bottom of second to last measurement
 
     # replaces denB with average of denB and denC
-    den['B'] = den.apply(lambda row: (row['B'] + row['C']) / 2 if not pd.isna(row['C']) else row['B'], axis=1)
+    den['B_kgm-3'] = den.apply(lambda row: (row['B_kgm-3'] + row['C_kgm-3']) / 2 if not pd.isna(row['C_kgm-3']) else row['B_kgm-3'], axis=1)
 
     #call function to calculate bulk density and SWE
-    bulk_A, sweA = calc_bulk('A')
-    bulk_B, sweB = calc_bulk('B')
+    bulk_A, sweA = calc_bulk('A_kgm-3')
+    bulk_B, sweB = calc_bulk('B_kgm-3')
 
     #insert values into df
-    den.loc[0, 'BulkA'] = bulk_A
-    den.loc[0, 'BulkB'] = bulk_B
-    den.loc[0, 'SWEA'] = sweA
-    den.loc[0, 'SWEB'] = sweB
+    den.loc[0, 'BulkA_kgm-3'] = bulk_A
+    den.loc[0, 'BulkB_kgm-3'] = bulk_B
+    den.loc[0, 'SWEA_mm'] = sweA
+    den.loc[0, 'SWEB_mm'] = sweB
 
     #export all data frames to .csv
     export_path = '/Users/colemankane/Desktop/crrel_exports'
 
     den.to_csv(f'{export_path}/{pit_id}_den.csv', index=False)
     #temp.to_csv(f'{export_path}/{pit_id}_temp.csv', index=False)
-    #strat.to_csv(f'/Users/colemankane/Desktop/flakesense/{pit_id}_strat.csv', index=False)
     strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
+    #strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
     #header.to_csv(f'{export_path}/{pit_id}_header.csv', index=False)
     #perm.to_csv(f'{export_path}/{pit_id}_perm.csv', index=False)
 
