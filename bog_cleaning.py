@@ -9,7 +9,8 @@ site['date'] = pd.to_datetime(site['date'], format='%Y-%m-%d %H:%M:%S')
 site.set_index('date', inplace=True)
 site['flag'] = 0
 
-stl = pd.read_csv('/Users/colemankane/Documents/BSU/CRREL Snow Strength/snow_strength_cleaning/BOG_snotel.csv', delimiter=',', low_memory=False, skiprows=6)
+stl = pd.read_csv('/Users/colemankane/Documents/BSU/CRREL Snow Strength/snow_strength_cleaning/ref_stations/BOG_snotel.csv',
+                  delimiter=',', low_memory=False, skiprows=6)
 stl.rename(columns={'SNWD.I-1 (in) ': 'hs_cm',
                        'WTEQ.I-1 (in) ': 'swe_mm',
                        'TOBS.I-1 (degC) ': 'temp_c'

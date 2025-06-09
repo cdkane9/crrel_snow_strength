@@ -18,7 +18,7 @@ caca['flag'] = 0
 
 # use nearby snotel to help fill gaps
 # Read in .csv of nearby snotel (if necessary)
-snotel = pd.read_csv('BDG_res_snotel.csv', delimiter=',', low_memory=False, skiprows=6)
+snotel = pd.read_csv('ref_stations/BDG_res_snotel.csv', delimiter=',', low_memory=False, skiprows=6)
 snotel.rename(columns={'SNWD.I-1 (in) ': 'hs_cm',
                        'WTEQ.I-1 (in) ': 'swe_mm',
                        'TOBS.I-1 (degC) ': 'temp_c'
@@ -57,7 +57,7 @@ caca = gap_fill(caca, snotel, st, end, 'swe_mm', 'b', dategap=True)[0]
 caca = gap_fill(caca, snotel, st, end, 'temp_c', 'b', dategap=True)[0]
 
 # read granite mountain wx station for wind data
-gmt = pd.read_csv('granite_mtn.csv', skiprows=10)
+gmt = pd.read_csv('ref_stations/granite_mtn.csv', skiprows=10)
 gmt['date'] = pd.to_datetime(gmt['date'], errors='coerce', utc=True)
 gmt['date'] = gmt['date'].dt.strftime('%Y-%m-%d %H:%M:%S')
 gmt['date'] = pd.to_datetime(gmt['date'], format='%Y-%m-%d %H:%M:%S')

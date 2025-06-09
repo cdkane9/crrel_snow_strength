@@ -57,7 +57,7 @@ caca['flag'] = 0
 plt.plot(caca['hs_cm'])
 # use nearby snotel to help fill gaps
 # Read in .csv of nearby snotel (if necessary)
-snotel = pd.read_csv('MCS_snotel.csv', delimiter=',', low_memory=False, skiprows=6)
+snotel = pd.read_csv('ref_stations/MCS_snotel.csv', delimiter=',', low_memory=False, skiprows=6)
 snotel.rename(columns={'SNWD.I-1 (in) ': 'hs_cm',
                        'WTEQ.I-1 (in) ': 'swe_mm',
                        'TOBS.I-1 (degC) ': 'temp_c'
