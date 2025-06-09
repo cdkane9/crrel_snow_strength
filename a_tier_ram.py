@@ -52,6 +52,7 @@ root_error = rmse(means['force'], means['rr'] * m)
 
 
 r2 = (sklearn.metrics.r2_score(means['force'], means['rr'] * m))
+print(r2)
 
 
 
