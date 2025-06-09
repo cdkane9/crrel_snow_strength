@@ -5,7 +5,7 @@ from pits import pit_scrubber
 from ram import ram_scrubber
 #from matrix import matrix_scrubber
 
-state = ['Wyoming']#'Colorado', Colorado_2, Colorado_3, 'Idaho']
+state = ['Idaho']#'Colorado', Colorado_2, Colorado_3, 'Idaho']
 data_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data'
 
 matrix_lst = []
@@ -53,9 +53,9 @@ for state in state:
                 ssa_lst.append([f'{file_path}/{ssa}', f'{site}_{date}'])
 
 
-
-#matrix_lst = [i for i in matrix_lst if i]
-#pit_lst = [i for i in pit_lst if i]
+#do SMP before anything else
+matrix_lst = [i for i in matrix_lst if i]
+pit_lst = [i for i in pit_lst if i]
 sram_lst = [i for i in sram_lst if i]
 pram_lst = [i for i in pram_lst if i]
 #ssa_lst = [i for i in ssa_lst if i]
