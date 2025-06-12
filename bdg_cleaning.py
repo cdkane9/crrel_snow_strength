@@ -16,6 +16,8 @@ caca.set_index('date', inplace=True)
 # create column for flagging data
 caca['flag'] = 0
 
+
+
 # use nearby snotel to help fill gaps
 # Read in .csv of nearby snotel (if necessary)
 snotel = pd.read_csv('ref_stations/BDG_res_snotel.csv', delimiter=',', low_memory=False, skiprows=6)
@@ -55,6 +57,10 @@ end = '2025-04-12 13:30:00'
 caca = gap_fill(caca, snotel, st, end, 'hs_cm', 'avg_diff', dategap=True)[0]
 caca = gap_fill(caca, snotel, st, end, 'swe_mm', 'b', dategap=True)[0]
 caca = gap_fill(caca, snotel, st, end, 'temp_c', 'b', dategap=True)[0]
+
+plt.plot(caca['hs_cm'])
+plt.plot(snotel['hs_cm'])
+plt.show()
 
 # read granite mountain wx station for wind data
 gmt = pd.read_csv('ref_stations/granite_mtn.csv', skiprows=10)

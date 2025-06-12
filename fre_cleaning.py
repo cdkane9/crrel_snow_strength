@@ -44,9 +44,11 @@ def mov_avg(x, y, w_size, weight=False):
 # read in dirty wx_station data
 file_path = '/Users/colemankane/Desktop/crrel_exports/wx_stations/Freeman_15min_dirty.csv'
 caca = pd.read_csv(file_path)
-
+plt.plot(caca['hs_cm'])
+plt.show()
 caca['hs_cm'] = mov_avg(caca.index, caca['hs_cm'], 80, False)
-
+plt.plot(caca['hs_cm'])
+plt.show()
 # convert to data frame, set date as index
 caca['date'] = pd.to_datetime(caca['date'], format='%Y-%m-%d %H:%M:%S')
 caca.set_index('date', inplace=True)
