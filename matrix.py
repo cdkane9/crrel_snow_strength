@@ -1,14 +1,16 @@
 import numpy as np
 import pandas as pd
 import os
+import snowmicropyn as smp
 import sys
 '''
 need to add something that checks if force is -1
 '''
-scope_path = '/Volumes/Seagate Backup Plus Drive/SnowScopes/WY25/20250325'
+export_path = '/Users/colemankane/Desktop/crrel_exports'
+scope_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Snow_Scope/'
 all_scopes = os.listdir(scope_path)
 
-
+smp_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/SMP/'
 
 def matrix_scrubber(matrix_path, id):
     '''
@@ -31,47 +33,62 @@ def matrix_scrubber(matrix_path, id):
         return matrix[ix]
 
     ##############################################
-    smp = get_index('SMP')
-    ##############################################
+    smp_ix = get_index('SMP')
+    if not smp_ix.empty:
 
+        smp_ix.to_csv(f'{export_path}/{id}_smp.csv', index=False)
+        smp_sn = smp_ix['SN'].astype(int).astype(str).str.zfill(2)
+        smp_pn = smp_ix['Profile #'].astype(int).astype(str).str.zfill(4)
+        smp_profile = 'S' + smp_sn + 'M' + smp_pn + '.PNT'
+        smp_profile = list(smp_profile)
+
+        print(smp_profile)
+        for i in range(len(smp_profile)):
+            p = smp.Profile.load(smp_path + smp_profile[i])
+            grd = p.detect_ground()
+            surf = p.detect_ground()
+            p.export_derivatives(f'/Users/colemankane/Desktop/crrel_exports/smp_profiles/{smp_profile[i]}_derivatives.csv',
+                                 precision=4, snowpack_only=True)
+            p.export_samples(f'/Users/colemankane/Desktop/crrel_exports/smp_profiles/{smp_profile[i]}_samples.csv',
+                             precision=4, snowpack_only=True)
+        else:
+            pass
+
+
+    ##############################################
     fscope = get_index('Force_Scope').dropna(subset=['SN', 'Profile #']).reset_index(drop=True)
+    if not fscope.empty:
+        sn = fscope['SN'].astype(int).astype(str).str.zfill(5)
+        pn = fscope['Profile #'].astype(int).astype(str)
+        scope_id = 'Profile' + pn + '_SN' + sn + '.csv'
+        fscope.to_csv(f'{export_path}/{id}_fscope.csv', index=False)
+    else:
+        try:
+            fscope = get_index('Force_dummy')
+            fscope.to_csv(f'{export_path}/{id}_fscope.csv', index=False)
+        except:
+            pass
 
-    sn = fscope['SN'].astype(int).astype(str).str.zfill(5)
-    pn = fscope['Profile #'].astype(int).astype(str)
-    scope_id = 'Profile' + pn + '_SN' + sn + '.csv'
-
-    for i in range(len(scope_id)):
-        find_profile = next((x for x in all_scopes if x.endswith(scope_id[i])), None)
-        profile_path = f'{scope_path}/{find_profile}'
-        profile = pd.read_csv(profile_path, skiprows=24)
-        fscope.loc[i, 'max_pressure'] = np.max(profile['hardness (kPa)'])
-        fscope.loc[i, 'id'] = id
 
     ##############################################
+
     ram_path = '/Users/colemankane/Desktop/crrel_exports/'
 
     fram = get_index('Force_Std_Ram')
     if not fram.empty:
-        depth = fram['Depth_m']
-        sram = pd.read_csv(ram_path + id + '_ram.csv')
-        for d in range(len(depth)):
-            sram = sram[sram['l'] < 80]
-            max_rr = np.nanmax(sram['rr'])
-            fram['max_rr'] = max_rr
-            fram['id'] = id
+        fram.to_csv(f'{export_path}/{id}_fram.csv', index=False)
     else:
         pass
 
 
     ##############################################
     scope = get_index('SnowScope')
+    ##############################################
 
 
-    export_path = '/Users/colemankane/Desktop/crrel_exports'
-    #export_path = '/Users/colemankane/Desktop/flakesense'
-    #smp.to_csv(f'{export_path}/{id}_smp.csv', index=False)
-    #fscope.to_csv(f'{export_path}/{id}_fscope.csv', index=False)
-    #fram.to_csv(f'{export_path}/{id}_fram.csv', index=False)
+
+
+
     #scope.to_csv(f'{export_path}/{id}_scope.csv', index=False)
 
 
