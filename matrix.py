@@ -9,6 +9,7 @@ need to add something that checks if force is -1
 export_path = '/Users/colemankane/Desktop/crrel_exports'
 scope_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Snow_Scope/'
 all_scopes = os.listdir(scope_path)
+scope_list = []
 
 smp_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/SMP/'
 
@@ -18,7 +19,7 @@ def matrix_scrubber(matrix_path, id):
     :param matrix_path: where to find matrix
     :return: none, exports to .csv's
     '''
-
+    #print(f'Scrubbing {matrix_path}, {id}...')
     matrix = pd.read_excel(matrix_path,
                            skiprows=3,
                            na_values='None')
@@ -31,7 +32,12 @@ def matrix_scrubber(matrix_path, id):
         '''
         ix = matrix['Data Type'] == type
         return matrix[ix]
-
+    #if 'Force_dummy' in matrix['Data Type'].values:
+    #    print(matrix_path)
+    #if 'force_dummy' in matrix['Data Type'].values:
+    #    print(matrix_path)
+    #if 'Force_scope' in matrix['Data Type'].values:
+    #    print(matrix_path)
     ##############################################
     smp_ix = get_index('SMP')
     if not smp_ix.empty:
@@ -42,32 +48,26 @@ def matrix_scrubber(matrix_path, id):
         smp_profile = 'S' + smp_sn + 'M' + smp_pn + '.PNT'
         smp_profile = list(smp_profile)
 
-        print(smp_profile)
+        #print(smp_profile)
         for i in range(len(smp_profile)):
             p = smp.Profile.load(smp_path + smp_profile[i])
             grd = p.detect_ground()
             surf = p.detect_ground()
-            p.export_derivatives(f'/Users/colemankane/Desktop/crrel_exports/smp_profiles/{smp_profile[i]}_derivatives.csv',
-                                 precision=4, snowpack_only=True)
-            p.export_samples(f'/Users/colemankane/Desktop/crrel_exports/smp_profiles/{smp_profile[i]}_samples.csv',
-                             precision=4, snowpack_only=True)
+            #p.export_derivatives(f'/Users/colemankane/Desktop/crrel_exports/smp_profiles/{smp_profile[i]}_derivatives.csv',
+            #                     precision=4, snowpack_only=True)
+            #p.export_samples(f'/Users/colemankane/Desktop/crrel_exports/smp_profiles/{smp_profile[i]}_samples.csv',
+            #                 precision=4, snowpack_only=True)
         else:
             pass
 
 
     ##############################################
-    fscope = get_index('Force_Scope').dropna(subset=['SN', 'Profile #']).reset_index(drop=True)
-    if not fscope.empty:
-        sn = fscope['SN'].astype(int).astype(str).str.zfill(5)
-        pn = fscope['Profile #'].astype(int).astype(str)
-        scope_id = 'Profile' + pn + '_SN' + sn + '.csv'
+    fscope = get_index('Force_Scope').reset_index(drop=True)
+
+    if not fscope.index.empty:
         fscope.to_csv(f'{export_path}/{id}_fscope.csv', index=False)
     else:
-        try:
-            fscope = get_index('Force_dummy')
-            fscope.to_csv(f'{export_path}/{id}_fscope.csv', index=False)
-        except:
-            pass
+        pass
 
 
     ##############################################
@@ -83,6 +83,16 @@ def matrix_scrubber(matrix_path, id):
 
     ##############################################
     scope = get_index('SnowScope')
+
+    if not scope.index.empty:
+        try:
+            scope.to_csv(f'{export_path}/{id}_scope.csv', index=False)
+            scope_sn = scope['SN'].astype(int).astype(str).str.zfill(5)
+            scope_pn = scope['Profile #'].astype(int).astype(str)
+            scope_list.append('Profile' + scope_pn + '_SN' + scope_sn)
+        except Exception as e:
+            print(f'error reading {matrix_path}: {e}')
+
     ##############################################
 
 

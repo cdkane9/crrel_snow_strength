@@ -3,9 +3,10 @@
 import os
 #from pits import pit_scrubber
 #from ram import ram_scrubber
-from matrix import matrix_scrubber
+from matrix import matrix_scrubber, scope_list
 
-state = ['Idaho']#'Colorado', Colorado_2, Colorado_3, 'Idaho']
+
+state = ['Wyoming', 'Colorado', 'Colorado_2', 'Colorado_3', 'Idaho']
 data_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data'
 
 matrix_lst = []
@@ -35,6 +36,8 @@ for state in state:
             matrix = next((i for i in date_dir if i.endswith('_matrix.xlsx')), None)
             if matrix:
                 matrix_lst.append([f'{file_path}/{matrix}', f'{site}_{date}'])
+
+
 
             '''
             pit = next((i for i in date_dir if i.endswith('_pit.xlsx') or i.endswith('_pit_entry.xlsx')), None)
@@ -74,4 +77,5 @@ for i in matrix_lst:
 
 #for i in pit_lst:
 #    pit_scrubber(i[0], i[1])
-
+print(scope_list[2])
+print(type(scope_list))
