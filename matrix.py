@@ -66,6 +66,12 @@ def matrix_scrubber(matrix_path, id):
 
     if not fscope.index.empty:
         fscope.to_csv(f'{export_path}/{id}_fscope.csv', index=False)
+        try:
+            fscope_sn = fscope['SN'].astype(int).astype(str).str.zfill(5)
+            fscope_pn = fscope['Profile #'].astype(int).astype(str)
+            scope_list.append('Profile' + fscope_pn + '_SN' + fscope_sn)
+        except Exception as e:
+            print(f'failed at {id}: {e}')
     else:
         pass
 
@@ -94,8 +100,6 @@ def matrix_scrubber(matrix_path, id):
             print(f'error reading {matrix_path}: {e}')
 
     ##############################################
-
-
 
 
 

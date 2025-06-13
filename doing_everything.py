@@ -1,4 +1,4 @@
-#import pandas as pd
+import pandas as pd
 #import numpy as np
 import os
 #from pits import pit_scrubber
@@ -77,5 +77,6 @@ for i in matrix_lst:
 
 #for i in pit_lst:
 #    pit_scrubber(i[0], i[1])
-print(scope_list[2])
-print(type(scope_list))
+
+scope_list = pd.DataFrame(pd.concat(scope_list, ignore_index=True).tolist())
+scope_list.to_csv('/Users/colemankane/Desktop/crrel_exports/scope_master_list.csv', index=False)
