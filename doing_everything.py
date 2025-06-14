@@ -2,6 +2,7 @@ import pandas as pd
 #import numpy as np
 import os
 from pits import pit_scrubber
+from ssa import ssa_scrubber
 #from ram import ram_scrubber
 from matrix import matrix_scrubber, scope_list
 
@@ -61,7 +62,6 @@ pit_lst = [i for i in pit_lst if i]
 #pram_lst = [i for i in pram_lst if i]
 ssa_lst = [i for i in ssa_lst if i]
 
-
     
 #for i in sram_lst:
 #    ram_scrubber(i[0], i[1]) # MUST run ram_scrubber before matrix scrubber
@@ -72,10 +72,11 @@ ssa_lst = [i for i in ssa_lst if i]
 #for i in matrix_lst:
 #    matrix_scrubber(i[0], i[1])
 
-for i in pit_lst:
-    pit_scrubber(i[0], i[1])
+#for i in pit_lst:
+#    pit_scrubber(i[0], i[1])
 
-
+for i in ssa_lst:
+    ssa_scrubber(i[0], i[1])
 
 
 #scope_list = pd.DataFrame(pd.concat(scope_list, ignore_index=True).tolist())
