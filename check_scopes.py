@@ -14,3 +14,5 @@ print(scope_end)
 master['Exists'] = master['id'].isin(scope_end)
 
 print(len(master[master['Exists'] == False]))
+missing = master[master['Exists'] == False]
+missing.to_csv('/Users/colemankane/Desktop/missing_scopes.csv', index=False)

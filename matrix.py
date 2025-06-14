@@ -32,12 +32,7 @@ def matrix_scrubber(matrix_path, id):
         '''
         ix = matrix['Data Type'] == type
         return matrix[ix]
-    #if 'Force_dummy' in matrix['Data Type'].values:
-    #    print(matrix_path)
-    #if 'force_dummy' in matrix['Data Type'].values:
-    #    print(matrix_path)
-    #if 'Force_scope' in matrix['Data Type'].values:
-    #    print(matrix_path)
+
     ##############################################
     smp_ix = get_index('SMP')
     if not smp_ix.empty:
@@ -94,8 +89,10 @@ def matrix_scrubber(matrix_path, id):
         try:
             scope.to_csv(f'{export_path}/{id}_scope.csv', index=False)
             scope_sn = scope['SN'].astype(int).astype(str).str.zfill(5)
+            scope_sn = [s.replace('00114', '01114') for s in scope_sn]
             scope_pn = scope['Profile #'].astype(int).astype(str)
             scope_list.append('Profile' + scope_pn + '_SN' + scope_sn)
+
         except Exception as e:
             print(f'error reading {matrix_path}: {e}')
 
