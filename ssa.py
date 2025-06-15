@@ -14,9 +14,9 @@ def ssa_scrubber(ssa_path, id):
     :param id:
     :return:
     '''
-    print(ssa_path, id)
+    #print(ssa_path, id)
     ssa = pd.read_excel(ssa_path, skiprows=3)
-    print(ssa)
+    print(ssa.columns)
     if not ssa.empty:
         ssa.loc[ssa['SSA'].notna(), 'SSA'] = np.nan
         ssa.loc[ssa['SSA.1'].notna(), 'SSA.1'] = np.nan
@@ -29,13 +29,18 @@ def ssa_scrubber(ssa_path, id):
         # A few checks to make sure that the density and ssa profiles are relatively coincident
 
         den_avg = np.nanmean((den['A_kgm-3'], den['B_kgm-3'], den['C_kgm-3']),
-                             axis=0) / 1000  # calculate average densty at each height
+                             axis=0) / 1000  # calculate average density at each height
 
         ref_a = ssa['NIR %'] / 100
 
-        ref_b = ssa['NIR %.1']
+        ref_b = ssa['NIR %.1'] / 100
 
-        ref_c = ssa['NIR %.2']
+        ref_c = ssa['NIR %.2'] / 100
+
+        def ix_cov(ssa_ix):
+            hag = ssa.loc[ssa_ix, 'Height:\n(cm above ground)']
+            match = den[(den['top_cm'] >= hag) & (den['bottom_cm'] < hag)]
+            return match.index
 
         oed = table[:, ][0, 1:]
         rho = table[:, ][1:, 0]
@@ -83,7 +88,7 @@ def ssa_scrubber(ssa_path, id):
             ref_22 = ref[row2, col_22]
 
             if (ref_12 - ref_11) == 0 or (ref_22 - ref_21) == 0:
-                ssa = round(6 / max(oed) * 1000, 10)
+                ssa_val = round(6 / max(oed) * 1000, 10)
                 print('measured reflectivity is smaller than range of the FRED model')
 
             # interpolated OED first inbetween reflectivities, then inbetween densities
@@ -91,15 +96,15 @@ def ssa_scrubber(ssa_path, id):
                 oedInt1 = oed[col_11] + abs(oed[col_12] - oed[col_11]) * (ref_i - ref_11) / (ref_12 - ref_11)
                 oedInt2 = oed[col_21] + abs(oed[col_22] - oed[col_21]) * (ref_i - ref_21) / (ref_22 - ref_21)
                 oedInt = oedInt2 - (oedInt2 - oedInt1) * (rho[row2] - rho_i) / (rho[row2] - rho[row1])
-                ssa = round(6 / oedInt * 1000, 10)
+                ssa_val = round(6 / oedInt * 1000, 10)
 
-            return ssa
+            return ssa_val
 
         cols = ['hag', 'density', 'reflect', 'ssa', 'oed']
         conv_ssa = []
         for i in range(len(ref_a)):
             conv_ssa.append([den.loc[den.index[i], 'top_cm'], den_avg[i], ref_a[i],
-                             interpolate_oed(den_avg[i], ref_a[i], k=1.119),
+                             interpolate_oed(den_avg[ix_cov(i)], ref_a[i], k=1.119),
                              6 / interpolate_oed(den_avg[i], ref_a[i], k=1.119)])
 
         ssa_ar = pd.DataFrame(conv_ssa, columns=cols)
