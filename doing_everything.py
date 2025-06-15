@@ -7,7 +7,7 @@ from ssa import ssa_scrubber
 from matrix import matrix_scrubber, scope_list
 
 
-state = ['Wyoming', 'Colorado', 'Colorado_2', 'Colorado_3', 'Idaho']
+state = ['Idaho']#, 'Colorado', 'Colorado_2', 'Colorado_3', 'Idaho']
 data_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data'
 
 matrix_lst = []

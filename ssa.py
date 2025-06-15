@@ -14,13 +14,12 @@ def ssa_scrubber(ssa_path, id):
     :param id:
     :return:
     '''
-    #print(ssa_path, id)
-    ssa = pd.read_excel(ssa_path, skiprows=3)
-    print(ssa.columns)
-    if not ssa.empty:
-        ssa.loc[ssa['SSA'].notna(), 'SSA'] = np.nan
-        ssa.loc[ssa['SSA.1'].notna(), 'SSA.1'] = np.nan
-        ssa.loc[ssa['SSA.2'].notna(), 'SSA.2'] = np.nan
+    print(ssa_path, id)
+    ssa_df = pd.read_excel(ssa_path, skiprows=3)
+    if not ssa_df.empty:
+        ssa_df.loc[ssa_df['SSA'].notna(), 'SSA'] = np.nan
+        ssa_df.loc[ssa_df['SSA.1'].notna(), 'SSA.1'] = np.nan
+        ssa_df.loc[ssa_df['SSA.2'].notna(), 'SSA.2'] = np.nan
 
         den_path = f'/Users/colemankane/Desktop/crrel_exports/{id}_den.csv'
         #try:
@@ -31,15 +30,16 @@ def ssa_scrubber(ssa_path, id):
         den_avg = np.nanmean((den['A_kgm-3'], den['B_kgm-3'], den['C_kgm-3']),
                              axis=0) / 1000  # calculate average density at each height
 
-        ref_a = ssa['NIR %'] / 100
+        ref_a = ssa_df['NIR %'] / 100
 
-        ref_b = ssa['NIR %.1'] / 100
+        ref_b = ssa_df['NIR %.1'] / 100
 
-        ref_c = ssa['NIR %.2'] / 100
+        ref_c = ssa_df['NIR %.2'] / 100
 
         def ix_cov(ssa_ix):
-            hag = ssa.loc[ssa_ix, 'Height:\n(cm above ground)']
+            hag = ssa_df.loc[ssa_ix, 'Height:\n(cm above ground)']
             match = den[(den['top_cm'] >= hag) & (den['bottom_cm'] < hag)]
+
             return match.index
 
         oed = table[:, ][0, 1:]
@@ -89,26 +89,50 @@ def ssa_scrubber(ssa_path, id):
 
             if (ref_12 - ref_11) == 0 or (ref_22 - ref_21) == 0:
                 ssa_val = round(6 / max(oed) * 1000, 10)
-                print('measured reflectivity is smaller than range of the FRED model')
+                #print('measured reflectivity is smaller than range of the FRED model')
 
             # interpolated OED first inbetween reflectivities, then inbetween densities
             else:
                 oedInt1 = oed[col_11] + abs(oed[col_12] - oed[col_11]) * (ref_i - ref_11) / (ref_12 - ref_11)
                 oedInt2 = oed[col_21] + abs(oed[col_22] - oed[col_21]) * (ref_i - ref_21) / (ref_22 - ref_21)
                 oedInt = oedInt2 - (oedInt2 - oedInt1) * (rho[row2] - rho_i) / (rho[row2] - rho[row1])
-                ssa_val = round(6 / oedInt * 1000, 10)
+                ssa_val = (6 / oedInt * 1000)
+                #print(type(ssa_val))
 
             return ssa_val
 
-        cols = ['hag', 'density', 'reflect', 'ssa', 'oed']
+        cols = ['hag_cm', 'density_kgm-3', 'reflect_%', 'ssa_1/mm', 'oed_1_mm',
+                'ssa_2/mm', 'oed_2_mm', 'ssa_3/mm', 'oed_3_mm']
         conv_ssa = []
         for i in range(len(ref_a)):
-            conv_ssa.append([den.loc[den.index[i], 'top_cm'], den_avg[i], ref_a[i],
-                             interpolate_oed(den_avg[ix_cov(i)], ref_a[i], k=1.119),
-                             6 / interpolate_oed(den_avg[i], ref_a[i], k=1.119)])
+            try:
+                conv_ssa.append(
+                    [
+                        den.loc[den.index[i], 'top_cm'],
+                        den_avg[i] * 1000,
+                        ref_a[i],
+                        float(interpolate_oed(den_avg[ix_cov(i)], ref_a[i], k=1.119)[0]),
+                        6 / interpolate_oed(den_avg[i], ref_a[i], k=1.119),
+                        float(interpolate_oed(den_avg[ix_cov(i)], ref_b[i], k=1.119)[0]),
+                        6 / interpolate_oed(den_avg[i], ref_b[i], k=1.119),
+                        float(interpolate_oed(den_avg[ix_cov(i)], ref_c[i], k=1.119)[0]),
+                        6 / interpolate_oed(den_avg[i], ref_c[i], k=1.119),
+                    ]
+                )
+            except Exception as e:
+                pass
+                #conv_ssa.append(
+                    #[den.loc[den.index[-1], 'top_cm'],
+                    # den_avg[-1] * 1000,
+                    # ref_a[i],
+                    # float(interpolate_oed(den_avg[-1], ref_a[i], k=1.119)),
+                    # 6 / interpolate_oed(den_avg[-1], ref_a[i], k=1.119)]
+                #)
 
         ssa_ar = pd.DataFrame(conv_ssa, columns=cols)
-        ssa_ar.to_csv(f'Users/colemankane/Desktop/crrel_exports/{id}_ssa.csv', index=False)
+        #ssa_ar = np.array(conv_ssa)
+
+        ssa_ar.to_csv(f'/Users/colemankane/Desktop/crrel_exports/{id}_ssa.csv', index=False)
         print('file exportted')
 
 
