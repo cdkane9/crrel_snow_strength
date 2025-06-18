@@ -31,7 +31,8 @@ def ssa_scrubber(ssa_path, id):
 
         den_avg = np.nanmean((den['A_kgm-3'], den['B_kgm-3'], den['C_kgm-3']),
                              axis=0) / 1000  # calculate average density at each height
-
+        if id == 'DHMet_20250101':
+            print(den_avg)
         ref_a = ssa_df['NIR %'] / 100
 
         ref_b = ssa_df['NIR %.1'] / 100
@@ -40,9 +41,15 @@ def ssa_scrubber(ssa_path, id):
 
         def ix_cov(ssa_ix):
             hag = ssa_df.loc[ssa_ix, 'Height:\n(cm above ground)']
-            match = den[(den['top_cm'] >= hag) & (den['bottom_cm'] < hag)]
-
-            return match.index
+            if len(den_avg) >= len(ref_a):
+                match = den[(den['top_cm'] >= hag) & (den['bottom_cm'] < hag)]
+                return match.index
+            else:
+                if ssa_ix == len(ssa_df):
+                    match = den_avg.tail(1)
+                else:
+                    match = den[(den['top_cm'] >= hag) & (den['bottom_cm'] < hag)]
+                return match.index
 
         oed = table[:, ][0, 1:]
         rho = table[:, ][1:, 0]
@@ -91,22 +98,13 @@ def ssa_scrubber(ssa_path, id):
 
             if (ref_12 - ref_11) == 0 or (ref_22 - ref_21) == 0:
                 ssa_val = round(6 / np.max(oed) * 1000, 1)
-                #print('if:', ssa_val)
-                #print('measured reflectivity is smaller than range of the FRED model')
 
             # interpolated OED first inbetween reflectivities, then inbetween densities
             else:
-
                 oedInt1 = oed[col_11] + abs(oed[col_12] - oed[col_11]) * (ref_i - ref_11) / (ref_12 - ref_11)
-
                 oedInt2 = oed[col_21] + abs(oed[col_22] - oed[col_21]) * (ref_i - ref_21) / (ref_22 - ref_21)
-
                 oedInt = float(oedInt2 - (oedInt2 - oedInt1) * (rho[row2] - rho_i) / (rho[row2] - rho[row1]))
-
-                #print(oedInt1, '\n', oedInt2, '\n', oedInt)
-                #print('else')
                 ssa_val = round(6 / oedInt * 1000, 1)
-                #print(ssa_val)
 
             return ssa_val
 
@@ -115,44 +113,48 @@ def ssa_scrubber(ssa_path, id):
                 'reflect3_%', 'ssa_3/mm', 'oed_3_mm']
         #print(type(ref_a))
         conv_ssa = []
-        for i in range(len(den_avg)):
-            try:
+        for i in range(len(ref_a)):
+            if i < len(den_avg):
+                conv = ix_cov(i)
                 conv_ssa.append(
                     [
-                        den.loc[den.index[i], 'top_cm'],
-                        den_avg[i] * 1000,
+                        ssa_df.loc[i, 'Height:\n(cm above ground)'],
+                        float(den_avg[conv]) * 1000,
                         ref_a[i],
-                        float(interpolate_oed(den_avg[ix_cov(i)], ref_a[i], k=1.119)[0]),
-                        6 / interpolate_oed(den_avg[i], ref_a[i], k=1.119),
+                        float(interpolate_oed(den_avg[conv], ref_a[i], k=1.119)),
+                        6 / interpolate_oed(den_avg[conv], ref_a[i], k=1.119),
                         ref_b[i],
-                        float(interpolate_oed(den_avg[ix_cov(i)], ref_b[i], k=1.119)[0]),
-                        6 / interpolate_oed(den_avg[i], ref_b[i], k=1.119),
+                        float(interpolate_oed(den_avg[conv], ref_b[i], k=1.119)),
+                        6 / interpolate_oed(den_avg[conv], ref_b[i], k=1.119),
                         ref_c[i],
-                        float(interpolate_oed(den_avg[ix_cov(i)], ref_c[i], k=1.119)[0]),
-                        6 / interpolate_oed(den_avg[i], ref_c[i], k=1.119),
+                        float(interpolate_oed(den_avg[conv], ref_c[i], k=1.119)),
+                        6 / interpolate_oed(den_avg[conv], ref_c[i], k=1.119),
                     ]
                 )
-            except Exception as e:
+
+            else:
+                conv = ix_cov(i)
                 conv_ssa.append(
-                    [den.loc[den.index[i], 'top_cm'],
-                     den_avg[i] * 1000,
+                    [ssa_df.loc[i, 'Height:\n(cm above ground)'],
+                     float(den_avg[conv]) * 1000,
                      ref_a[i],
-                     float(interpolate_oed(den_avg[ix_cov(i)], ref_a[i], k=1.119)),
-                     6 / interpolate_oed(den_avg[ix_cov(i)], ref_a[i], k=1.119),
+                     float(interpolate_oed(den_avg[conv], ref_a[i], k=1.119)),
+                     6 / interpolate_oed(den_avg[conv], ref_a[i], k=1.119),
                      ref_b[i],
-                     float(interpolate_oed(den_avg[ix_cov(i)], ref_b[i], k=1.119)),
-                     6 / interpolate_oed(den_avg[ix_cov(i)], ref_b[i], k=1.119),
+                     float(interpolate_oed(den_avg[conv], ref_b[i], k=1.119)),
+                     6 / interpolate_oed(den_avg[conv], ref_b[i], k=1.119),
                      ref_c[i],
-                     float(interpolate_oed(den_avg[ix_cov(i)], ref_c[i], k=1.119)),
-                     interpolate_oed(den_avg[ix_cov(i)], ref_c[i], k=1.119),
+                     float(interpolate_oed(den_avg[conv], ref_c[i], k=1.119)),
+                     6 / interpolate_oed(den_avg[conv], ref_c[i], k=1.119),
                      ]
                 )
+
 
         ssa_ar = pd.DataFrame(conv_ssa, columns=cols)
         #ssa_ar = np.array(conv_ssa)
 
         ssa_ar.to_csv(f'/Users/colemankane/Desktop/crrel_exports/{id}_ssa.csv', index=False)
-        print('file exportted')
+        print('file exported')
 
 
 

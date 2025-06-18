@@ -7,7 +7,7 @@ from ssa import ssa_scrubber
 from matrix import matrix_scrubber, scope_list
 
 
-state = ['Idaho']#, 'Colorado', 'Colorado_2', 'Colorado_3', 'Idaho']
+state = ['Colorado_3']#, 'Colorado', 'Colorado_2', 'Colorado_3', 'Idaho']
 data_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data'
 
 matrix_lst = []
@@ -73,7 +73,7 @@ ssa_lst = [i for i in ssa_lst if i]
 #    matrix_scrubber(i[0], i[1])
 
 #for i in pit_lst:
-#    pit_scrubber(i[0], i[1])
+#   pit_scrubber(i[0], i[1])
 
 for i in ssa_lst:
     ssa_scrubber(i[0], i[1])
