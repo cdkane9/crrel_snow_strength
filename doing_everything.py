@@ -7,7 +7,7 @@ from ssa import ssa_scrubber
 from matrix import matrix_scrubber, scope_list
 
 
-state = ['Idaho']#, 'Colorado', 'Colorado_2', 'Colorado_3', 'Idaho']
+state = ['Wyoming']#, 'Colorado', 'Colorado_2', 'Colorado_3', 'Idaho']
 data_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data'
 
 matrix_lst = []
@@ -60,7 +60,7 @@ for state in state:
 pit_lst = [i for i in pit_lst if i]
 #sram_lst = [i for i in sram_lst if i]
 #pram_lst = [i for i in pram_lst if i]
-ssa_lst = [i for i in ssa_lst if i]
+#ssa_lst = [i for i in ssa_lst if i]
 
     
 #for i in sram_lst:
@@ -72,11 +72,11 @@ ssa_lst = [i for i in ssa_lst if i]
 #for i in matrix_lst:
 #    matrix_scrubber(i[0], i[1])
 
-#for i in pit_lst:
-#   pit_scrubber(i[0], i[1])
+for i in pit_lst:
+   pit_scrubber(i[0], i[1])
 
-for i in ssa_lst:
-    ssa_scrubber(i[0], i[1])
+#for i in ssa_lst:
+#    ssa_scrubber(i[0], i[1])
 
 
 #scope_list = pd.DataFrame(pd.concat(scope_list, ignore_index=True).tolist())

@@ -7,6 +7,8 @@ header_cols = [
     'Pit ID',#
     'Time pit open',#
     'Snow depth_cm',#
+    'SWE_A_mm',
+    'SWE_B_mm',
     'UTME',#
     'UTMN',#
     'UTM zone',#
@@ -47,7 +49,7 @@ strat_cols = [
 ]
 
 
-
+t = True
 def pit_scrubber(pit_path, id):
     '''
     reads in a pat to a pit sheet.  pulls out different data types and exports to .csv
@@ -58,43 +60,27 @@ def pit_scrubber(pit_path, id):
     print(pit_path)
     print(id)
     print()
-    try:
+    if t:
         sheet = pd.read_excel(pit_path,
                               skiprows=1,
                               sheet_name=['PIT'])
+
 
         #separate pit data and environment
         poo = sheet['PIT']
         #env = sheet['Copy of NEW ENVIORMENT']
 
-
-        #pull out header data
+        # pull out header data
         pit_id = id
-        hs = float(poo.iloc[5, 4]) # snow depth
-        open_t = poo.iloc[3,6] # time pit opened
-        utme = poo.iloc[5,8] # UTM easting
-        utmn = poo.iloc[5,12] # UTM northing
-        utmz = poo.iloc[5,17] # UTM zone
-        temp_s = poo.iloc[3,19] # temp profile start time
-        temp_e = poo.iloc[3,20] # temp profile end time
-        lwc_sn = poo.iloc[5,6] # LWC serial number
-        cmnts = poo.iloc[0,-2] # comments/notes
-
-        header = [
-            pit_id,
-            open_t,
-            hs,
-            utme,
-            utmn,
-            utmz,
-            temp_s,
-            temp_e,
-            lwc_sn,
-            cmnts
-
-        ]
-        header = pd.DataFrame([header], columns=header_cols)
-
+        hs = float(poo.iloc[5, 4])  # snow depth
+        open_t = poo.iloc[3, 6]  # time pit opened
+        utme = poo.iloc[5, 8]  # UTM easting
+        utmn = poo.iloc[5, 12]  # UTM northing
+        utmz = poo.iloc[5, 17]  # UTM zone
+        temp_s = poo.iloc[3, 19]  # temp profile start time
+        temp_e = poo.iloc[3, 20]  # temp profile end time
+        lwc_sn = poo.iloc[5, 6]  # LWC serial number
+        cmnts = poo.iloc[0, -2]  # comments/notes
 
         #pull out LWC
         perm = poo.iloc[9:, 6:8]
@@ -116,7 +102,6 @@ def pit_scrubber(pit_path, id):
         strat = poo.iloc[9:, 11:30].dropna(how='all', axis=1)
         if not strat.empty:
             try:
-
                 strat = strat.dropna(how='all', axis=0)
                 strat = strat.drop(strat.columns[1], axis=1).reset_index(drop=True)
                 strat.columns = strat_cols
@@ -129,11 +114,11 @@ def pit_scrubber(pit_path, id):
 
 
 
+
+
         # pull out density profiles
         bottom_col = poo.iloc[9:, 2] # column with height of the bottom of each density sample
         first_na = bottom_col.isna().idxmax()  # index of the first instance of NaN, extent of density measurements
-
-
 
         #subset of density measurements (top, bottom, denA, denB, denC)
         den = poo.iloc[9:first_na, 0:6]
@@ -163,29 +148,57 @@ def pit_scrubber(pit_path, id):
         # replaces denB with average of denB and denC
         den['B_kgm-3'] = den.apply(lambda row: (row['B_kgm-3'] + row['C_kgm-3']) / 2 if not pd.isna(row['C_kgm-3']) else row['B_kgm-3'], axis=1)
 
+        print('poo')
         #call function to calculate bulk density and SWE
         bulk_A, sweA = calc_bulk('A_kgm-3')
         bulk_B, sweB = calc_bulk('B_kgm-3')
 
+        print('pee')
         #insert values into df
         den.loc[0, 'BulkA_kgm-3'] = bulk_A
         den.loc[0, 'BulkB_kgm-3'] = bulk_B
         den.loc[0, 'SWEA_mm'] = sweA
         den.loc[0, 'SWEB_mm'] = sweB
 
+
+        header = [
+            pit_id,
+            open_t,
+            hs,
+            sweA,
+            sweB,
+            utme,
+            utmn,
+            utmz,
+            temp_s,
+            temp_e,
+            lwc_sn,
+            cmnts
+
+        ]
+        header = pd.DataFrame([header], columns=header_cols)
+        header.to_csv(f'/Users/colemankane/Desktop/crrel_exports/{pit_id}_summary.csv', index=False)
+
         #export all data frames to .csv
-        if 'TS' in export_path:
-            pit_id = f"{pit_id}_TS_{open_t}"
-        den.to_csv(f'{export_path}/{pit_id}_den.csv', index=False)
+        #if 'TS' in export_path:
+        #    pit_id = f"{pit_id}_TS_{open_t}"
+        #den.to_csv(f'{export_path}/{pit_id}_den.csv', index=False)
 
         #strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
         #header.to_csv(f'{export_path}/{pit_id}_header.csv', index=False)
         #perm.to_csv(f'{export_path}/{pit_id}_perm.csv', index=False)
-    except Exception as e:
-        error_lst.append([pit_path, id, e])
+    else:# Exception as e:
+        #error_lst.append([pit_path, id, e])
+        #print(e)
+        pass
+
+
     err_df = pd.DataFrame(error_lst, columns=['pit_path', 'id', 'error'])
-    #err_df.to_csv(f'/Users/colemankane/Desktop/strat_err.csv')
+    err_df.to_csv(f'/Users/colemankane/Desktop/strat_err.csv')
+
     return
+
+
 
 
 
