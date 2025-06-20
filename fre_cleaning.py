@@ -44,19 +44,19 @@ def mov_avg(x, y, w_size, weight=False):
 # read in dirty wx_station data
 file_path = '/Users/colemankane/Desktop/crrel_exports/wx_stations/Freeman_15min_dirty.csv'
 caca = pd.read_csv(file_path)
-plt.plot(caca['hs_cm'])
-plt.show()
+
 caca['hs_cm'] = mov_avg(caca.index, caca['hs_cm'], 80, False)
-plt.plot(caca['hs_cm'])
-plt.show()
+
+
 # convert to data frame, set date as index
 caca['date'] = pd.to_datetime(caca['date'], format='%Y-%m-%d %H:%M:%S')
 caca.set_index('date', inplace=True)
 
 
+
 # create column for flagging data
 caca['flag'] = 0
-plt.plot(caca['hs_cm'])
+
 # use nearby snotel to help fill gaps
 # Read in .csv of nearby snotel (if necessary)
 snotel = pd.read_csv('ref_stations/MCS_snotel.csv', delimiter=',', low_memory=False, skiprows=6)
@@ -86,45 +86,34 @@ caca, hs_m, hs_b, hs_rmse = gap_fill(caca,
                                   'b',
                                   True
                                  )
-plt.subplot(2,1,1)
-plt.plot(caca['hs_cm'])
-plt.subplot(2,2,2)
-plt.plot(caca['temp_c'])
-plt.show()
+
 
 caca, t_m, t_b, t_rmse = gap_fill(caca, snotel,
                                   s1, e1,
                                   'temp_c',
                                   'b',
                                   True)
-plt.subplot(2,1,1)
-plt.plot(caca['hs_cm'])
-plt.subplot(2,1,2)
-plt.plot(caca['temp_c'])
-plt.show()
+
 
 caca = gap_fill(caca, snotel,
                 s2, e2,
                 'temp_c',
                 'b', True, False)[0]
 
-plt.subplot(2,1,1)
-plt.plot(caca['hs_cm'])
-plt.subplot(2,1,2)
-plt.plot(caca['temp_c'])
-plt.show()
+
 
 caca = gap_fill(caca, snotel,
                 s2, e2,
                 'temp_c',
                 'b', True)[0]
 
-plt.subplot(2,1,2)
-plt.plot(caca['hs_cm'])
-plt.subplot(2,1,1)
-plt.plot(caca['temp_c'])
-plt.show()
+no_snow = caca.index <= '2024-10-07 00:00:00'
+caca.loc[no_snow, 'hs_cm'] = 0
 
+plt.plot(caca['hs_cm'])
+plt.plot(snotel['hs_cm'])
+plt.show()
+'''
 pilot = pd.read_csv('pilot_station.csv', skiprows=10)
 pilot['wspd_mps'] = pilot['wspd_mps'].astype(float)
 pilot['date'] = pd.to_datetime(pilot['date'], errors='coerce', utc=True)
@@ -132,9 +121,11 @@ pilot['date'] = pilot['date'].dt.strftime('%Y-%m-%d %H:%M:%S')
 pilot['date'] = pd.to_datetime(pilot['date'], format='%Y-%m-%d %H:%M:%S')
 pilot.set_index('date', inplace=True)
 pilot.index = pilot.index - pd.Timedelta(minutes=6)
-
+'''
 #caca, w_m, w_b, w_rmse = gap_fill(caca, pilot,
 #                                  s1, e1,
 #                                  'wspd_mps',
 #                                  'b',
 #                                  True, False)
+
+caca.to_csv('/Users/colemankane/Desktop/crrel_exports/wx_stations/Freeman_15min_cleaned_gapfilled.csv')

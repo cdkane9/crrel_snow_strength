@@ -47,7 +47,7 @@ def gap_fill(caca, snotel, start, end, param, shift, dategap=False, scatter=Fals
 
         stl_fill = snotel[(snotel.index >= sgap) & (snotel.index < egap)].copy()
         if shift == 'avg':
-            avg_diff = np.abs((start_gap + end_gap) / 2)
+            avg_diff = (start_gap + end_gap) / 2
             fill = m * stl_fill[param] + avg_diff
             #print(avg_diff)
         elif shift == 'start':
