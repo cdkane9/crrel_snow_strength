@@ -3,8 +3,27 @@ import numpy as np
 
 export_path = '/Users/colemankane/Desktop/crrel_exports'
 
+site_coords = {'BMO': [509875, 4817493, '12T'],
+               'TPO': [559105, 4852195, '12T'],
+               'FCO': [511490, 4802204, '12T'],
+               'CCO': [513075, 4815428, '12T'],
+               'FRE': [4866131, 604178, '11T'],
+               'BDG': [4983225, 568300, '11T'],
+               'BOG': [4845307, 573179, '11T'],
+               'MCSST': [4865185, 607084, '11T'],
+               'JPLMet': [4417691, 424547, '13S'],
+               'FEFHQ': [4417566, 424436, '13S'],
+               'FST': [4413544, 425788, '13S'],
+               'LFMet': [4416150, 425293, '13S'],
+               'AM' : [4412425, 426178, '13S'],
+               'SLMet': [425729, 4419946, '13S']
+               }
+
+
 header_cols = [
     'Pit ID',#
+    'Site',
+    'Date',
     'Time pit open',#
     'Snow depth_cm',#
     'SWE_A_mm',
@@ -48,8 +67,6 @@ strat_cols = [
     'comments'
 ]
 
-
-t = True
 def pit_scrubber(pit_path, id):
     '''
     reads in a pat to a pit sheet.  pulls out different data types and exports to .csv
@@ -59,8 +76,10 @@ def pit_scrubber(pit_path, id):
     error_lst = []
     print(pit_path)
     print(id)
-    print()
-    if t:
+    site = id.split('_')[0]
+    date = id.split('_')[1]
+
+    try:
         sheet = pd.read_excel(pit_path,
                               skiprows=1,
                               sheet_name=['PIT'])
@@ -81,6 +100,8 @@ def pit_scrubber(pit_path, id):
         temp_e = poo.iloc[3, 20]  # temp profile end time
         lwc_sn = poo.iloc[5, 6]  # LWC serial number
         cmnts = poo.iloc[0, -2]  # comments/notes
+        if type(utme) == float: #
+            utme, utmn, utmz = site_coords[site]
 
         #pull out LWC
         perm = poo.iloc[9:, 6:8]
@@ -112,10 +133,6 @@ def pit_scrubber(pit_path, id):
         else:
             pass
 
-
-
-
-
         # pull out density profiles
         bottom_col = poo.iloc[9:, 2] # column with height of the bottom of each density sample
         first_na = bottom_col.isna().idxmax()  # index of the first instance of NaN, extent of density measurements
@@ -141,6 +158,7 @@ def pit_scrubber(pit_path, id):
 
 
         #dealing with density profile that does not extend to ground
+
         den.iloc[-1, 1] = 0 # change bottom of last measurement to 0
         if first_na != 10: # in case one density measurement was made from surface to ground
             den.iloc[-1, 0] = den.iloc[-2, 1] # change top of last measurement to bottom of second to last measurement
@@ -148,12 +166,11 @@ def pit_scrubber(pit_path, id):
         # replaces denB with average of denB and denC
         den['B_kgm-3'] = den.apply(lambda row: (row['B_kgm-3'] + row['C_kgm-3']) / 2 if not pd.isna(row['C_kgm-3']) else row['B_kgm-3'], axis=1)
 
-        print('poo')
+
         #call function to calculate bulk density and SWE
         bulk_A, sweA = calc_bulk('A_kgm-3')
         bulk_B, sweB = calc_bulk('B_kgm-3')
 
-        print('pee')
         #insert values into df
         den.loc[0, 'BulkA_kgm-3'] = bulk_A
         den.loc[0, 'BulkB_kgm-3'] = bulk_B
@@ -163,6 +180,8 @@ def pit_scrubber(pit_path, id):
 
         header = [
             pit_id,
+            site,
+            date,
             open_t,
             hs,
             sweA,
@@ -176,8 +195,11 @@ def pit_scrubber(pit_path, id):
             cmnts
 
         ]
+
         header = pd.DataFrame([header], columns=header_cols)
+        header.fillna('N/O', inplace=True)
         header.to_csv(f'/Users/colemankane/Desktop/crrel_exports/{pit_id}_summary.csv', index=False)
+        print('header exported')
 
         #export all data frames to .csv
         #if 'TS' in export_path:
@@ -187,9 +209,9 @@ def pit_scrubber(pit_path, id):
         #strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
         #header.to_csv(f'{export_path}/{pit_id}_header.csv', index=False)
         #perm.to_csv(f'{export_path}/{pit_id}_perm.csv', index=False)
-    else:# Exception as e:
-        #error_lst.append([pit_path, id, e])
-        #print(e)
+    except Exception as e:
+        error_lst.append([pit_path, id, e])
+        print(e)
         pass
 
 
