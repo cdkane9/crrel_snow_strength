@@ -133,7 +133,7 @@ def pit_scrubber(pit_path, id):
             try:
                 strat = strat.dropna(how='all', axis=0)
                 strat = strat.drop(strat.columns[1], axis=1).reset_index(drop=True)
-                strat.columns = strat_cols
+                strat.columns = strat_cols[:len(strat.columns)]
                 strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
             except Exception as e:
                 error_lst.append([pit_path, id, e])

@@ -19,8 +19,19 @@ def ram_scrubber(ram_path, id):
     :return: none, exports to folder
     '''
     print(id)
+
+    ram_rough = pd.read_excel(ram_path)
+    t_start = ram_rough.iloc[2, 6]
+
     ram = pd.read_excel(ram_path,
                         skiprows=7)
+
+    site = id.split('_')[0]
+    date = ram_path.split('_')[-4]
+
+    if ram_path.split('_')[-3] == 'TS':
+        id = f"{site}_{date}_TS_{t_start}"
+        print('TIME SERIES')
 
     ram.columns = better_cols
     ram = ram.astype(float)
