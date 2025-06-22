@@ -7,7 +7,7 @@ from ssa import ssa_scrubber
 from matrix import matrix_scrubber, scope_list
 
 
-state = ['Idaho']#, 'Colorado', 'Colorado_2', 'Colorado_3', 'Idaho']
+state = ['Colorado_3']#, 'Colorado', 'Colorado_2', 'Colorado_3', 'Idaho']
 data_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data'
 
 matrix_lst = []
@@ -38,9 +38,10 @@ for state in state:
             if matrix:
                 matrix_lst.append([f'{file_path}/{matrix}', f'{site}_{date}'])
 
-            pit = next((i for i in date_dir if i.endswith('_pit.xlsx') or i.endswith('_pit_entry.xlsx')), None)
+            pit = [i for i in date_dir if i.endswith('_pit.xlsx') or i.endswith('_pit_entry.xlsx')]
             if pit:
-                pit_lst.append([f'{file_path}/{pit}', f'{site}_{date}'])
+                for i in pit:
+                    pit_lst.append([f'{file_path}/{i}', f'{site}_{date}'])
 
             sram = next((i for i in date_dir if i.endswith('_sram.xlsx')), None)
             if sram:
@@ -74,6 +75,7 @@ pit_lst = [i for i in pit_lst if i]
 
 for i in pit_lst:
    pit_scrubber(i[0], i[1])
+
 
 #for i in ssa_lst:
 #    ssa_scrubber(i[0], i[1])

@@ -79,6 +79,8 @@ def pit_scrubber(pit_path, id):
     site = id.split('_')[0]
     date = id.split('_')[1]
 
+
+
     try:
         sheet = pd.read_excel(pit_path,
                               skiprows=1,
@@ -93,6 +95,7 @@ def pit_scrubber(pit_path, id):
         pit_id = id
         hs = float(poo.iloc[5, 4])  # snow depth
         open_t = poo.iloc[3, 6]  # time pit opened
+        date = poo.iloc[0,6]
         utme = poo.iloc[5, 8]  # UTM easting
         utmn = poo.iloc[5, 12]  # UTM northing
         utmz = poo.iloc[5, 17]  # UTM zone
@@ -100,8 +103,13 @@ def pit_scrubber(pit_path, id):
         temp_e = poo.iloc[3, 20]  # temp profile end time
         lwc_sn = poo.iloc[5, 6]  # LWC serial number
         cmnts = poo.iloc[0, -2]  # comments/notes
+
         if type(utme) == float: #
             utme, utmn, utmz = site_coords[site]
+
+        if pit_path.split('_')[-3] == 'TS':
+            pit_id = f"{site}_{date}_TS_{open_t}"
+            print('TIME SERIES')
 
         #pull out LWC
         perm = poo.iloc[9:, 6:8]
@@ -126,7 +134,7 @@ def pit_scrubber(pit_path, id):
                 strat = strat.dropna(how='all', axis=0)
                 strat = strat.drop(strat.columns[1], axis=1).reset_index(drop=True)
                 strat.columns = strat_cols
-                #strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
+                strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
             except Exception as e:
                 error_lst.append([pit_path, id, e])
 
@@ -197,29 +205,24 @@ def pit_scrubber(pit_path, id):
         ]
 
         header = pd.DataFrame([header], columns=header_cols)
-        header.fillna('N/O', inplace=True)
+        header.fillna(str('N/O'), inplace=True)
         header.to_csv(f'/Users/colemankane/Desktop/crrel_exports/{pit_id}_summary.csv', index=False)
-        print('header exported')
+        #print('header exported')
 
         #export all data frames to .csv
-        #if 'TS' in export_path:
-        #    pit_id = f"{pit_id}_TS_{open_t}"
+
         #den.to_csv(f'{export_path}/{pit_id}_den.csv', index=False)
 
         #strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
         #header.to_csv(f'{export_path}/{pit_id}_header.csv', index=False)
         #perm.to_csv(f'{export_path}/{pit_id}_perm.csv', index=False)
     except Exception as e:
-        error_lst.append([pit_path, id, e])
         print(e)
-        pass
+        error_lst.append([pit_path, id, e])
 
-
-    err_df = pd.DataFrame(error_lst, columns=['pit_path', 'id', 'error'])
-    err_df.to_csv(f'/Users/colemankane/Desktop/strat_err.csv')
-
+    error_lst = pd.DataFrame(error_lst)
+    error_lst.to_csv('/Users/colemankane/Desktop/strat_err.csv', mode='a')
     return
-
 
 
 
