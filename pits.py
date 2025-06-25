@@ -1,7 +1,9 @@
 import pandas as pd
 import numpy as np
+import os
 
 export_path = '/Users/colemankane/Desktop/crrel_exports'
+
 
 site_coords = {'BMO': [509875, 4817493, '12T'],
                'TPO': [559105, 4852195, '12T'],
@@ -64,7 +66,10 @@ strat_cols = [
     'type',
     'HH',
     'wetness',
-    'comments'
+    'comments',
+    'hs_cm',
+    'swe_mm',
+    'density_kgm3'
 ]
 
 def pit_scrubber(pit_path, id):
@@ -114,27 +119,54 @@ def pit_scrubber(pit_path, id):
         #pull out LWC
         perm = poo.iloc[9:, 6:8]
         perm.columns = LWC_cols
-        perm = perm.reset_index(drop=True)
-
+        if not perm.empty:
+            perm = perm.reset_index(drop=True)
+            perm['SN'] = lwc_sn
+            #perm.to_csv(f'{export_path}/{pit_id}_perm.csv', index= False)
 
         #pull out temp profile
         temp = poo.iloc[9:, 8:10]
         temp.columns = temp_cols
+        # add start and end time
+        temp.loc[0, 't_start'] = temp_s
+        temp.loc[0, 't_end'] = temp_s
+
         if not temp.empty:
             temp = temp.reset_index(drop=True)
+            temp.loc[0, 'date'] = date
             # temp.to_csv(f'{export_path}/{pit_id}_temp.csv', index=False)
         else:
             pass
 
 
         #pull out stratigraphy
-        strat = poo.iloc[9:, 11:30].dropna(how='all', axis=1)
+        drop_cols = [1, 4, 6, 12, 13, 14, 15, 16, 17, 18, 19] # columns that will always be NaN
+        strat = poo.iloc[9:, 11:34] # stratigraphy section
+
         if not strat.empty:
             try:
-                strat = strat.dropna(how='all', axis=0)
-                strat = strat.drop(strat.columns[1], axis=1).reset_index(drop=True)
-                strat.columns = strat_cols[:len(strat.columns)]
+                strat = strat.dropna(how='all').reset_index(drop=True) # drop rows of all NaN
+                strat = strat.drop(columns=strat.columns[drop_cols]) # drop cols of all NaN
+                strat.columns = strat_cols # rename columns
+                strat_na = strat['bottom_cm'].isna().idxmax() # find ground
+                strat = strat.iloc[:strat_na, :] # truncate data frame to just stratigraphy
+
+                # calculate swe from density or density from swe
+                if strat['swe_mm'].isna().all():
+                    strat['swe_mm'] = strat['density_kgm3'] * strat['hs_cm'] / 100
+                    strat['swe_mm'] = strat['swe_mm'].astype(float)
+                    strat['swe_mm'] = strat['swe_mm'].round(0)
+
+                elif strat['density_kgm3'].isna().all():
+                    strat['density_kgm3'] = round(strat['swe_mm'] * 100 / strat['hs_cm'], 0)
+
+                else:
+                    pass
+
+                strat.loc[0, 'date'] = date
+
                 strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
+
             except Exception as e:
                 error_lst.append([pit_path, id, e])
 
@@ -185,6 +217,8 @@ def pit_scrubber(pit_path, id):
         den.loc[0, 'SWEA_mm'] = sweA
         den.loc[0, 'SWEB_mm'] = sweB
 
+        den.to_csv(f'{export_path}/{id}_den.csv', index=False)
+
 
         header = [
             pit_id,
@@ -206,16 +240,10 @@ def pit_scrubber(pit_path, id):
 
         header = pd.DataFrame([header], columns=header_cols)
         header.fillna(str('N/O'), inplace=True)
-        header.to_csv(f'/Users/colemankane/Desktop/crrel_exports/{pit_id}_summary.csv', index=False)
-        #print('header exported')
+        #header.to_csv(f'/Users/colemankane/Desktop/crrel_exports/{pit_id}_summary.csv', index=False)
 
-        #export all data frames to .csv
 
-        #den.to_csv(f'{export_path}/{pit_id}_den.csv', index=False)
 
-        #strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
-        #header.to_csv(f'{export_path}/{pit_id}_header.csv', index=False)
-        #perm.to_csv(f'{export_path}/{pit_id}_perm.csv', index=False)
     except Exception as e:
         print(e)
         error_lst.append([pit_path, id, e])
@@ -224,6 +252,11 @@ def pit_scrubber(pit_path, id):
     error_lst.to_csv('/Users/colemankane/Desktop/strat_err.csv', mode='a')
     return
 
+
+prac_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Colorado/Sites/AM/20250205/AM_20250205_pit.xlsx'
+prac_id = 'AM_20250205'
+
+pit_scrubber(prac_path, prac_id)
 
 
 
