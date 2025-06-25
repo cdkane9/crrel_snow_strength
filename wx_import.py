@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 
-site_name = 'Freeman'
+site_name = 'Brundage'
 site_raw = pd.read_csv(f'wx_stations/{site_name}_15Min.dat',
                        on_bad_lines='skip',
                        delimiter=',',
@@ -18,7 +18,7 @@ if site_name == 'Brundage':
     site_wdir = site_raw['WindDir_SD1_WVT'].astype(float)
     site_swe = site_raw['SS_SWE_Avg'].astype(float)
     site_rh = site_raw['RH'].astype(float)
-    #site_dist = site_raw['SnoDAR_distance_Avg'].astype(float)
+    site_dist = site_raw['SnoDAR_distance_Avg'].astype(float)
     site = {'date': site_date,
             'hs_cm': site_hs,
             'swe_mm': site_swe,
@@ -26,7 +26,7 @@ if site_name == 'Brundage':
             'rh': site_rh,
             'wspd_mps': site_ws,
             'wdir': site_wdir,
-            #'dist': site_dist
+            'dist': site_dist
             }
 
 elif site_name == 'Freeman':

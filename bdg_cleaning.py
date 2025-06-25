@@ -18,6 +18,7 @@ caca['flag'] = 0
 
 
 
+
 # use nearby snotel to help fill gaps
 # Read in .csv of nearby snotel (if necessary)
 snotel = pd.read_csv('ref_stations/BDG_res_snotel.csv', delimiter=',', low_memory=False, skiprows=6)
@@ -26,6 +27,8 @@ snotel.rename(columns={'SNWD.I-1 (in) ': 'hs_cm',
                        'TOBS.I-1 (degC) ': 'temp_c'
                        },inplace=True)
 snotel['hs_cm'] *= 2.54 # convert hs to cm
+plt.plot(snotel['hs_cm'])
+plt.show()
 sno_ix = snotel['hs_cm'] > 0 # index
 snotel['hs_cm'] = snotel['hs_cm'][sno_ix] # filter
 snotel['swe_mm'] *= 25.4 # convert swe to mm
