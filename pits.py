@@ -165,7 +165,7 @@ def pit_scrubber(pit_path, id):
 
                 strat.loc[0, 'date'] = date
 
-                strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
+                #strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
 
             except Exception as e:
                 error_lst.append([pit_path, id, e])
@@ -192,9 +192,9 @@ def pit_scrubber(pit_path, id):
             '''
             weights = den['top_cm'] - den['bottom_cm']
             weighted = den[profile] * weights
-            bulk_den = round(np.nansum(weighted) / hs, 0)
-            swe = round(bulk_den * hs / 1000, 1)
-            return bulk_den, swe * 10
+            bulk_den = np.nansum(weighted) / den.loc[0, 'top_cm']
+            swe = round(bulk_den * den.loc[0, 'top_cm'] / 1000, 1)
+            return round(bulk_den, 0), swe * 10
 
 
         #dealing with density profile that does not extend to ground
@@ -256,7 +256,7 @@ def pit_scrubber(pit_path, id):
 prac_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Colorado/Sites/AM/20250205/AM_20250205_pit.xlsx'
 prac_id = 'AM_20250205'
 
-pit_scrubber(prac_path, prac_id)
+#pit_scrubber(prac_path, prac_id)
 
 
 

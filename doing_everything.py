@@ -7,7 +7,7 @@ from ram import ram_scrubber
 #from matrix import matrix_scrubber, scope_list
 
 
-state = ['Wyoming']#, 'Idaho']
+state = ['Colorado']#, 'Idaho']
 data_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data'
 
 matrix_lst = []
