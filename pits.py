@@ -18,7 +18,8 @@ site_coords = {'BMO': [509875, 4817493, '12T'],
                'FST': [4413544, 425788, '13S'],
                'LFMet': [4416150, 425293, '13S'],
                'AM' : [4412425, 426178, '13S'],
-               'SLMet': [425729, 4419946, '13S']
+               'SLMet': [425729, 4419946, '13S'],
+               'DHMet': [, , ,]
                }
 
 
@@ -216,6 +217,8 @@ def pit_scrubber(pit_path, id):
         den.loc[0, 'BulkB_kgm-3'] = bulk_B
         den.loc[0, 'SWEA_mm'] = sweA
         den.loc[0, 'SWEB_mm'] = sweB
+
+        den = den.drop(columns='C_kgm-3')
 
         den.to_csv(f'{export_path}/{id}_den.csv', index=False)
 
