@@ -100,6 +100,7 @@ if site_name == 'AM':
     site_RH2 = site_raw['RH_2'].astype(float)
     site_ws = site_raw['WS_1_ms_S_WVT'].astype(float)
     site_wdir = site_raw['WindDir_1_SD1_WVT'].astype(float)
+    site_precip = site_raw['PPT_mm_Tot']
     site = {
         'date': site_date,
         'hs_cm': site_hs,
@@ -108,6 +109,7 @@ if site_name == 'AM':
         'rh1': site_RH1,
         'rh2': site_RH2,
         'wspd_mps': site_ws,
+        'precip_mm': site_precip
     }
     site = pd.DataFrame(site)
 
@@ -115,13 +117,6 @@ if site_name == 'AM':
     site = site.set_index('date')
 
     site.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/{site_name}_1hr_dirty.csv')
-
-site = pd.DataFrame(site)
-site['date'] = pd.to_datetime(site_date, format='%Y-%m-%d %H:%M:%S')
-plt.plot(site['hs_cm'])
-plt.show()
-
-#site.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/{site_name}_15min_dirty.csv')
 
 
 

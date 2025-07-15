@@ -110,10 +110,11 @@ caca = gap_fill(caca, snotel,
 no_snow = caca.index <= '2024-10-07 00:00:00'
 caca.loc[no_snow, 'hs_cm'] = 0
 
+'''
 plt.plot(caca['hs_cm'])
 plt.plot(snotel['hs_cm'])
 plt.show()
-'''
+
 pilot = pd.read_csv('pilot_station.csv', skiprows=10)
 pilot['wspd_mps'] = pilot['wspd_mps'].astype(float)
 pilot['date'] = pd.to_datetime(pilot['date'], errors='coerce', utc=True)
