@@ -29,6 +29,11 @@ if site_name == 'Brundage':
             'dist': site_dist
             }
 
+    site = site[(site['date'] >= '2024-10-01 00:00:00')]
+    site = site.set_index('date')
+
+    site.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/{site_name}_15min_dirty.csv')
+
 elif site_name == 'Freeman':
     site_raw = pd.read_csv(f'wx_stations/{site_name}_15Min.dat',
                            on_bad_lines='skip',
@@ -51,6 +56,11 @@ elif site_name == 'Freeman':
             'wdir': site_wdir,
             'dist': site_dist}
 
+    site = site[(site['date'] >= '2024-10-01 00:00:00')]
+    site = site.set_index('date')
+
+    site.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/{site_name}_15min_dirty.csv')
+
 elif site_name == 'Bogus':
     site_raw = pd.read_csv(f'wx_stations/{site_name}_15Min.dat',
                            on_bad_lines='skip',
@@ -68,6 +78,11 @@ elif site_name == 'Bogus':
             'rh': site_rh
             }
 
+    site = site[(site['date'] >= '2024-10-01 00:00:00')]
+    site = site.set_index('date')
+
+    site.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/{site_name}_15min_dirty.csv')
+
 if site_name == 'AM':
     site_raw = pd.read_csv(
         f'/Users/colemankane/Desktop/{site_name}_1hr copy.dat',
@@ -77,9 +92,8 @@ if site_name == 'AM':
         skiprows=[0, 2, 3])
     print(site_raw.columns)
     print(site_raw.head)
-    site_raw_dt = site_raw['TIMESTAMP']
-    site_date = pd.to_datetime(site_raw_dt, format='%Y-%m-%d %H:%M:%S')
-    site_hs = site_raw['DT_Std'].astype(float)
+    site_date = site_raw['TIMESTAMP']
+    site_hs = site_raw['DBTCDT'].astype(float)
     site_temp_1 = site_raw['Tair_1_Avg'].astype(float)
     site_temp_2 = site_raw['Tair_2_Avg'].astype(float)
     site_RH1 = site_raw['RH_1'].astype(float)
@@ -95,16 +109,18 @@ if site_name == 'AM':
         'rh2': site_RH2,
         'wspd_mps': site_ws,
     }
+    site = pd.DataFrame(site)
 
-'''
+    site = site[(site['date'] >= '2024-10-01 00:00:00')]
+    site = site.set_index('date')
+
+    site.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/{site_name}_1hr_dirty.csv')
+
 site = pd.DataFrame(site)
-site = site[(site['date'] >= '2024-10-01 00:00:00')]
-site = site.set_index('date')
-
-plt.plot(site['hs_cm'] / 100)
-plt.plot(site['dist'])
+site['date'] = pd.to_datetime(site_date, format='%Y-%m-%d %H:%M:%S')
+plt.plot(site['hs_cm'])
 plt.show()
-'''
+
 #site.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/{site_name}_15min_dirty.csv')
 
 
