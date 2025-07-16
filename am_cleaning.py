@@ -2,7 +2,16 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from gap_fil_snotel import gap_fill
-from fre_cleaning import mov_avg
+from moving_average import mov_avg
+
+'''
+Questions for Kelly:
+Offset on HS?
+How is precip measured/recorded
+Which temp/anamometer is which (height)?
+Start at 11/09?
+
+'''
 
 file_path = '/Users/colemankane/Desktop/crrel_exports/wx_stations/AM_1hr_dirty.csv'
 caca = pd.read_csv(file_path)
@@ -25,5 +34,6 @@ caca.loc[~diff_ix, 'flag'] = 1
 
 
 
-plt.plot(caca['wspd_mps'])
+plt.plot(caca['precip_mm'] * 10)
+plt.plot(caca['hs_cm'])
 plt.show()

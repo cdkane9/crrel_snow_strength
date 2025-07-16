@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 
-site_name = 'AM'
+site_name = 'FST'
 
 if site_name == 'Brundage':
     site_raw = pd.read_csv(f'wx_stations/{site_name}_15Min.dat',
@@ -90,8 +90,6 @@ if site_name == 'AM':
         delimiter=',',
         low_memory=False,
         skiprows=[0, 2, 3])
-    print(site_raw.columns)
-    print(site_raw.head)
     site_date = site_raw['TIMESTAMP']
     site_hs = site_raw['DBTCDT'].astype(float)
     site_temp_1 = site_raw['Tair_1_Avg'].astype(float)
@@ -119,4 +117,34 @@ if site_name == 'AM':
     site.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/{site_name}_1hr_dirty.csv')
 
 
+if site_name in ['FST', 'DHMet']:
+    site_raw = pd.read_csv(f'wx_stations/{site_name}_2425_1hr.dat',
+                           on_bad_lines='skip',
+                           delimiter=',',
+                           low_memory=False,
+                           skiprows=[0, 2, 3])
+    site_date = site_raw['TIMESTAMP']
+    site_hs = site_raw['DBTCDT'].astype(float)
+    site_temp_1 = site_raw['Tair_1_Avg'].astype(float)
+    site_temp_2 = site_raw['Tair_2_Avg'].astype(float)
+    site_RH1 = site_raw['RH_1'].astype(float)
+    site_RH2 = site_raw['RH_2'].astype(float)
+    site_ws = site_raw['WS_1_ms_S_WVT'].astype(float)
+    site_wdir = site_raw['WindDir_1_SD1_WVT'].astype(float)
+    site_precip = site_raw['PPT_mm_Tot']
 
+    site = {
+        'date': site_date,
+        'hs_cm': site_hs,
+        'temp1_c': site_temp_1,
+        'temp2_c': site_temp_2,
+        'rh1': site_RH1,
+        'rh2': site_RH2,
+        'wspd_mps': site_ws,
+        'precip_mm': site_precip
+    }
+    site = pd.DataFrame(site)
+    print(site.columns)
+    plt.plot(pd.to_datetime(site['date'], format='%Y-%m-%d %H:%M:%S'), site['hs_cm'])
+    plt.show()
+    site.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/{site_name}_1hr_dirty.csv')
