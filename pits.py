@@ -19,7 +19,7 @@ site_coords = {'BMO': [509875, 4817493, '12T'],
                'LFMet': [4416150, 425293, '13S'],
                'AM' : [4412425, 426178, '13S'],
                'SLMet': [425729, 4419946, '13S'],
-               'DHMet': [, , ,]
+               'DHMet': [426149, 4417598, '13S']
                }
 
 
@@ -220,8 +220,8 @@ def pit_scrubber(pit_path, id):
 
         den = den.drop(columns='C_kgm-3')
 
-        den.to_csv(f'{export_path}/{id}_den.csv', index=False)
-
+        #den.to_csv(f'{export_path}/{id}_den.csv', index=False)
+        den.to_csv(f'/Users/colemankane/Desktop/20250715_den_hs_for_stine/{pit_id}_den.csv', index=False)
 
         header = [
             pit_id,
