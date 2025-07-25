@@ -4,7 +4,43 @@ import matplotlib.pyplot as plt
 from gap_fil_snotel import gap_fill
 from datetime import datetime
 
+site_raw = pd.read_csv(f'wx_stations/Brundage_2024_2025_15min_raw.dat',
+                           on_bad_lines='skip',
+                           delimiter=',',
+                           low_memory=False,
+                           skiprows=[0, 2, 3])
+site_raw['SnoDAR_snow_depth_Avg'] = site_raw['SnoDAR_snow_depth_Avg'].astype(float) * 100
 
+
+site_raw['TIMESTAMP'] = pd.to_datetime(site_raw["TIMESTAMP"], format='%Y-%m-%d %H:%M:%S')
+
+site_raw = site_raw[(site_raw['TIMESTAMP'] >= '2024-10-01 00:00:00')]
+site_raw = site_raw.set_index('TIMESTAMP')
+
+
+diff = site_raw['SnoDAR_snow_depth_Avg'].diff().abs()
+diff_ix = diff <= 12
+site_raw['SnoDAR_snow_depth_Avg'] = site_raw['SnoDAR_snow_depth_Avg'][diff_ix]
+
+
+
+hs_start = pd.Timestamp('2025-02-28 14:45:00')
+hs_end = pd.Timestamp('2025-03-02 14:45:00')
+site_raw.loc[hs_start:hs_end, 'SnoDAR_snow_depth_Avg'] += 200
+
+buried_start = pd.Timestamp('2025-02-17 00:00:00')
+buried_end = pd.Timestamp('2025-02-18 14:45:00')
+
+site_raw.loc[buried_start:buried_end, 'SnoDAR_snow_depth_Avg'] = np.nan
+
+
+site_raw.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/Brundage_2024_2025_15min_raw.dat')
+plt.plot(site_raw['SnoDAR_snow_depth_Avg'])
+plt.show()
+
+
+
+'''
 # read in dirty wx_station data
 file_path = '/Users/colemankane/Desktop/crrel_exports/wx_stations/Brundage_15min_dirty.csv'
 caca = pd.read_csv(file_path)
@@ -16,7 +52,8 @@ caca.set_index('date', inplace=True)
 # create column for flagging data
 caca['flag'] = 0
 
-
+plt.plot(caca['hs_cm'])
+plt.show()
 
 
 # use nearby snotel to help fill gaps
@@ -72,4 +109,4 @@ gmt['date'] = gmt['date'].dt.strftime('%Y-%m-%d %H:%M:%S')
 gmt['date'] = pd.to_datetime(gmt['date'], format='%Y-%m-%d %H:%M:%S')
 gmt.set_index('date', inplace=True)
 gmt = gmt.resample('15min').interpolate(method='index')
-
+'''
