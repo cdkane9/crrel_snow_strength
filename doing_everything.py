@@ -63,6 +63,7 @@ for state in state:
                 ssa_lst.append([f'{file_path}/{x}', f'{site}_{date}'])
 
             trans = [i for i in date_dir if i.split('_')[-1] in trans_end]
+
             trans = [i for i in trans if not i.startswith('~$')]
             for t in trans:
                 transect_lst.append([f'{file_path}/{t}', f'{site}_{date}'])
@@ -75,7 +76,8 @@ for state in state:
 
 #pram_lst = [i for i in pram_lst if i]
 #ssa_lst = [i for i in ssa_lst if i]
-transect_lst = [i for i in transect_lst if i]
+print(transect_lst)
+#transect_lst = [i for i in transect_lst if i]
     
 #for i in sram_lst:
 #    ram_scrubber(i[0], i[1]) # MUST run ram_scrubber before matrix scrubber

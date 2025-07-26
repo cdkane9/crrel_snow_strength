@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 
-site_name = 'FST'
+site_name = 'AM'
 
 if site_name == 'Brundage':
     site_raw = pd.read_csv(f'wx_stations/{site_name}_15Min.dat',
@@ -84,12 +84,8 @@ elif site_name == 'Bogus':
     site.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/{site_name}_15min_dirty.csv')
 
 if site_name == 'AM':
-    site_raw = pd.read_csv(
-        f'/Users/colemankane/Desktop/{site_name}_1hr copy.dat',
-        on_bad_lines='skip',
-        delimiter=',',
-        low_memory=False,
-        skiprows=[0, 2, 3])
+
+
     site_date = site_raw['TIMESTAMP']
     site_hs = site_raw['DBTCDT'].astype(float)
     site_temp_1 = site_raw['Tair_1_Avg'].astype(float)
@@ -113,6 +109,8 @@ if site_name == 'AM':
 
     site = site[(site['date'] >= '2024-10-01 00:00:00')]
     site = site.set_index('date')
+
+
 
     site.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/{site_name}_1hr_dirty.csv')
 

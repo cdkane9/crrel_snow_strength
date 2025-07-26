@@ -1,8 +1,15 @@
 import numpy as np
 import pandas as pd
-
+import re
 def transect_scrubber(trans_path, id):
     print(trans_path, id)
+    site = id.split('_')[0]
+    match = re.search(r'HStransect([A-Za-z0-9]+)\.xlsx$', trans_path)
+    if match:
+        if match.group(1) == 'JPLA':
+            end = 'SNA'
+        else:
+            end = match.group(1)
     trans = pd.read_excel(trans_path,
                           usecols='B:M',
                           skiprows=0)
@@ -39,12 +46,9 @@ def transect_scrubber(trans_path, id):
     if trans_path.split('_')[-3] == 'TS':
         id = f'{site}_{date}_TS_{time_start}'
         print('TIME SERIES')
-    export_path = f'/Users/colemankane/Desktop/20250715_den_hs_for_stine/{id}_transect.csv'
+    export_path = f'/Users/colemankane/Desktop/20250715_den_hs_for_stine/{id}_transect{end}.csv'
     caca.to_csv(export_path, index=False)
 
 
-path_in = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Colorado/Sites/AM/20250108/AM_20250108_HStransectA.xlsx'
-id = 'AM_20250108'
-transect_scrubber(path_in, id)
 
 

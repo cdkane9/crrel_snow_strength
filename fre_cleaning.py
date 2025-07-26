@@ -1,22 +1,58 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from gap_fil_snotel import gap_fill
-from datetime import datetime
-from moving_average import mov_avg
 
+
+
+site_raw = pd.read_csv(f'wx_stations/Freeman_2024_2025_15min_raw.dat',
+                           on_bad_lines='skip',
+                           delimiter=',',
+                           low_memory=False,
+                           skiprows=[0, 2, 3])
+
+for i in site_raw.columns:
+    print(i)
+
+site_raw['SnoDAR_snow_depth_Avg'] = site_raw['SnoDAR_snow_depth_Avg'].astype(float) * 100
+
+site_raw['TIMESTAMP'] = pd.to_datetime(site_raw["TIMESTAMP"], format='%Y-%m-%d %H:%M:%S')
+
+diff = site_raw['SnoDAR_snow_depth_Avg'].diff().abs()
+diff_ix = diff <= 15
+site_raw['SnoDAR_snow_depth_Avg'] = site_raw['SnoDAR_snow_depth_Avg'][diff_ix]
+
+
+site_raw = site_raw[(site_raw['TIMESTAMP'] >= '2024-10-01 00:00:00')]
+site_raw = site_raw.set_index('TIMESTAMP')
+
+snow_first = pd.Timestamp('2024-10-29 00:00:00')
+site_raw.loc[:snow_first, 'SnoDAR_snow_depth_Avg'] = 0
+
+#for i in range(len(site_raw)):
+ #   print(site_raw.iloc[i]['DTC_Avg(30)'], site_raw.index[i])
+
+site_raw.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/Freeman_2024_2025_15min_raw.dat')
+
+
+plt.plot(site_raw['IR01Up_Avg'].astype(float))
+plt.plot(site_raw['SR01Up_Avg'].astype(float))
+plt.tight_layout()
+plt.show()
+
+'''
 # read in dirty wx_station data
 file_path = '/Users/colemankane/Desktop/crrel_exports/wx_stations/Freeman_15min_dirty.csv'
 caca = pd.read_csv(file_path)
 
-caca['hs_cm'] = mov_avg(caca.index, caca['hs_cm'], 80, False)
+#caca['hs_cm'] = mov_avg(caca.index, caca['hs_cm'], 80, False)
 
 
 # convert to data frame, set date as index
 caca['date'] = pd.to_datetime(caca['date'], format='%Y-%m-%d %H:%M:%S')
 caca.set_index('date', inplace=True)
 
-
+plt.plot(caca['hs_cm'])
+plt.show()
 
 # create column for flagging data
 caca['flag'] = 0
@@ -74,7 +110,7 @@ caca = gap_fill(caca, snotel,
 no_snow = caca.index <= '2024-10-07 00:00:00'
 caca.loc[no_snow, 'hs_cm'] = 0
 
-'''
+
 plt.plot(caca['hs_cm'])
 plt.plot(snotel['hs_cm'])
 plt.show()
@@ -86,7 +122,7 @@ pilot['date'] = pilot['date'].dt.strftime('%Y-%m-%d %H:%M:%S')
 pilot['date'] = pd.to_datetime(pilot['date'], format='%Y-%m-%d %H:%M:%S')
 pilot.set_index('date', inplace=True)
 pilot.index = pilot.index - pd.Timedelta(minutes=6)
-'''
+
 #caca, w_m, w_b, w_rmse = gap_fill(caca, pilot,
 #                                  s1, e1,
 #                                  'wspd_mps',
@@ -94,3 +130,4 @@ pilot.index = pilot.index - pd.Timedelta(minutes=6)
 #                                  True, False)
 
 caca.to_csv('/Users/colemankane/Desktop/crrel_exports/wx_stations/Freeman_15min_cleaned_gapfilled.csv')
+'''

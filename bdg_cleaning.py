@@ -10,7 +10,8 @@ site_raw = pd.read_csv(f'wx_stations/Brundage_2024_2025_15min_raw.dat',
                            low_memory=False,
                            skiprows=[0, 2, 3])
 site_raw['SnoDAR_snow_depth_Avg'] = site_raw['SnoDAR_snow_depth_Avg'].astype(float) * 100
-
+for i in site_raw.columns:
+    print(i)
 
 site_raw['TIMESTAMP'] = pd.to_datetime(site_raw["TIMESTAMP"], format='%Y-%m-%d %H:%M:%S')
 
@@ -35,7 +36,7 @@ site_raw.loc[buried_start:buried_end, 'SnoDAR_snow_depth_Avg'] = np.nan
 
 
 site_raw.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/Brundage_2024_2025_15min_raw.dat')
-plt.plot(site_raw['SnoDAR_snow_depth_Avg'])
+plt.plot(site_raw['SoilVUE_T_5cm_Avg'].astype(float))
 plt.show()
 
 
