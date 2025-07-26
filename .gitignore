@@ -9,7 +9,9 @@ crrelsnowstrength-ad63ab401736.json
 .docx
 *.xml
 *.iml
+*.dat
 
+.gitignore
 
 
 # Byte-compiled / optimized / DLL files
