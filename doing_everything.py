@@ -4,11 +4,11 @@ import os
 from pits import pit_scrubber
 #from ssa import ssa_scrubber
 #from ram import ram_scrubber
-from matrix import matrix_scrubber, scope_list
-from transects import transect_scrubber
+#from matrix import matrix_scrubber, scope_list
+#from transects import transect_scrubber
 
 
-state = ['Idaho']#, 'Idaho']
+state = ['Colorado']#, 'Idaho']
 data_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data'
 
 trans_end = ['HStransect.xlsx', 'HStransectA.xlsx', 'HStransectB.xlsx',
