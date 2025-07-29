@@ -50,7 +50,7 @@ density_cols = [
 
 LWC_cols = [
     'PermA',
-    'PermB',
+    'PermB'
 ] # add device and SN here
 
 temp_cols = [
@@ -107,6 +107,8 @@ def pit_scrubber(pit_path, id):
         temp_s = poo.iloc[3, 19]  # temp profile start time
         temp_e = poo.iloc[3, 20]  # temp profile end time
         lwc_sn = poo.iloc[5, 6]  # LWC serial number
+        if lwc_sn == None:
+            lwc_sn = 'N/O'
         cmnts = poo.iloc[0, -2]  # comments/notes
 
         if type(utme) == float: #
@@ -119,17 +121,26 @@ def pit_scrubber(pit_path, id):
         #pull out LWC
         perm = poo.iloc[9:, 6:8]
         perm.columns = LWC_cols
+        perm = perm.dropna(how='all').reset_index(drop=True)
         if not perm.empty:
-            perm = perm.reset_index(drop=True)
-            perm['SN'] = lwc_sn
-            perm.to_csv(f'{export_path}/{pit_id}_perm.csv', index= False)
+            perm_h = poo.iloc[9:9 + len(perm), [0, 2]]
+            perm_h.columns = ['top_cm', 'bottom_cm']
+            perm_h = perm_h.dropna(how='all').reset_index(drop=True)
+            perm = pd.concat([perm_h, perm], axis=1)
+            perm.loc[0, 'SN'] = lwc_sn
+            print(lwc_sn)
+            perm.to_csv(f'/Users/colemankane/Desktop/perms/{pit_id}_perm.csv', index= False)
 
         #pull out temp profile
         temp = poo.iloc[9:, 8:10]
         temp.columns = temp_cols
         # add start and end time
-        temp.loc[0, 't_start'] = temp_s
-        temp.loc[0, 't_end'] = temp_s
+        try:
+            temp.loc[0, 't_start'] = temp_s
+            temp.loc[0, 't_end'] = temp_e
+        except:
+            temp['t_start'].iat[0] = 'N/O'
+            temp['t_end'].iat[0] = 'N/O'
 
         if not temp.empty:
             temp = temp.reset_index(drop=True)
@@ -166,7 +177,7 @@ def pit_scrubber(pit_path, id):
                     pass
 
                 strat.loc[0, 'date'] = date
-                strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
+                #strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
 
             except Exception as e:
                 error_lst.append([pit_path, id, e])
@@ -220,7 +231,7 @@ def pit_scrubber(pit_path, id):
 
         den = den.drop(columns='C_kgm-3')
 
-        den.to_csv(f'{export_path}/{id}_den.csv', index=False)
+        #den.to_csv(f'{export_path}/{id}_den.csv', index=False)
         #den.to_csv(f'/Users/colemankane/Desktop/20250715_den_hs_for_stine/{pit_id}_den.csv', index=False)
 
         header = [
@@ -243,12 +254,12 @@ def pit_scrubber(pit_path, id):
 
         header = pd.DataFrame([header], columns=header_cols)
         header.fillna(str('N/O'), inplace=True)
-        header.to_csv(f'/Users/colemankane/Desktop/crrel_exports/{pit_id}_summary.csv', index=False)
+        #header.to_csv(f'/Users/colemankane/Desktop/crrel_exports/{pit_id}_summary.csv', index=False)
 
 
 
     except Exception as e:
-        print(e)
+        print('error:', e)
         error_lst.append([pit_path, id, e])
 
     error_lst = pd.DataFrame(error_lst)
