@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 site_raw = pd.read_csv(
-        f'/Users/colemankane/Documents/BSU/CRREL Snow Strength/snow_strength_cleaning/wx_stations/FST_2425_10min.dat',
+        f'/Users/colemankane/Documents/BSU/CRREL Snow Strength/snow_strength_cleaning/wx_stations/FST_2425_1hr.dat',
         on_bad_lines='skip',
         delimiter=',',
         low_memory=False,
@@ -33,8 +33,8 @@ e_mess = pd.Timestamp('2025-02-11 00:00:00')
 mask = (site_raw.index >= s_mess) & (site_raw.index <= e_mess) & (site_raw['DBTCDT'] > 145)
 site_raw.loc[mask, 'DBTCDT'] = np.nan
 
-early_s = pd.Timestamp('2024-11-09 00:00:00')
-early_e = pd.Timestamp('2024-11-20 00:00:00')
+early_s = pd.Timestamp('2024-10-01 00:00:00')
+early_e = pd.Timestamp('2024-11-17 00:00:00')
 mask2 = (site_raw.index >= early_s) & (site_raw.index <= early_e) & (site_raw['DBTCDT'] > 80)
 site_raw.loc[mask2, 'DBTCDT'] = np.nan
 
@@ -43,13 +43,15 @@ mask3 = (site_raw.index >= end) & (site_raw['DBTCDT'] > 80)
 site_raw.loc[mask3, 'DBTCDT'] = np.nan
 
 
-plt.plot(site_raw['LWin_Avg'].astype(float), label='LWin')
-plt.legend()
+plt.plot(site_raw['Tair_1_Avg'].astype(float))
 plt.title('FST')
 plt.show()
 
+site_raw.to_csv(f'/Users/colemankane/Desktop/crrel_exports/wx_stations/FoolSnotel_2024_2025_1hr_raw.dat')
+
+
 '''
-file_path = '/Users/colemankane/Desktop/crrel_exports/wx_stations/DHMet_2425_1hr_dirty.csv'
+file_path = '/Users/colemankane/Desktop/crrel_exports/wx_stations/FoolSnotel_.csv'
 caca = pd.read_csv(file_path)
 
 print(caca.columns)

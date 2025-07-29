@@ -24,7 +24,7 @@ site_raw['DBTCDT'] = site_raw['DBTCDT'].astype(float) - 18
 diff = site_raw['DBTCDT'].diff().abs()
 diff_ix = diff <= 15
 site_raw['DBTCDT'] = site_raw['DBTCDT'][diff_ix]
-
+print(site_raw.tail)
 plt.plot(site_raw['Albedo_Avg'].astype(float), label='Albedo')
 plt.legend()
 plt.title('AM')
