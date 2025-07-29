@@ -10,6 +10,7 @@ def ssa_scrubber(ssa_path, id):
     :return:
     '''
     # read in ssa sheet
+    print(id)
     ssa_df = pd.read_excel(ssa_path, skiprows=3)
 
     if not ssa_df.empty:
@@ -27,7 +28,7 @@ def ssa_scrubber(ssa_path, id):
         table = np.genfromtxt('/Users/colemankane/Documents/BSU/CRREL Snow Strength/snow_strength_cleaning/lookUpTabFRED.txt', delimiter=',', skip_header=0, encoding='utf-8')
 
         # calculate average density at each height
-        den_avg = np.nanmean((den['A_kgm-3'], den['B_kgm-3'], den['C_kgm-3']),
+        den_avg = np.nanmean((den['A_kgm-3'], den['B_kgm-3']),
                              axis=0) / 1000
 
         # convert reflectance values (recorded in field) to decimals
@@ -134,7 +135,7 @@ def ssa_scrubber(ssa_path, id):
                 conv_ssa.append(
                     [
                         ssa_df.loc[i, 'Height:\n(cm above ground)'],
-                        float(den_avg[conv]) * 1000,
+                        den_avg[conv].astype(float) * 1000,
                         ref_a[i],
                         float(interpolate_oed(den_avg[conv], ref_a[i], k=1.119)),
                         6 * interpolate_oed(den_avg[conv], ref_a[i], k=1.119),
@@ -151,7 +152,7 @@ def ssa_scrubber(ssa_path, id):
                 conv = ix_cov(i)
                 conv_ssa.append(
                     [ssa_df.loc[i, 'Height:\n(cm above ground)'],
-                     float(den_avg[conv]) * 1000,
+                     den_avg[conv].astype(float) * 1000,
                      ref_a[i],
                      float(interpolate_oed(den_avg[conv], ref_a[i], k=1.119)),
                      6 * interpolate_oed(den_avg[conv], ref_a[i], k=1.119),

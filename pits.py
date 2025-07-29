@@ -80,7 +80,6 @@ def pit_scrubber(pit_path, id):
     :return: .csv of strat, LWC, density, temp, header
     '''
     error_lst = []
-    print(pit_path)
     print(id)
     site = id.split('_')[0]
     date = id.split('_')[1]
@@ -123,7 +122,7 @@ def pit_scrubber(pit_path, id):
         if not perm.empty:
             perm = perm.reset_index(drop=True)
             perm['SN'] = lwc_sn
-            #perm.to_csv(f'{export_path}/{pit_id}_perm.csv', index= False)
+            perm.to_csv(f'{export_path}/{pit_id}_perm.csv', index= False)
 
         #pull out temp profile
         temp = poo.iloc[9:, 8:10]
@@ -135,7 +134,7 @@ def pit_scrubber(pit_path, id):
         if not temp.empty:
             temp = temp.reset_index(drop=True)
             temp.loc[0, 'date'] = date
-            # temp.to_csv(f'{export_path}/{pit_id}_temp.csv', index=False)
+            temp.to_csv(f'{export_path}/{pit_id}_temp.csv', index=False)
         else:
             pass
 
@@ -144,13 +143,15 @@ def pit_scrubber(pit_path, id):
         drop_cols = [1, 4, 6, 12, 13, 14, 15, 16, 17, 18, 19] # columns that will always be NaN
         strat = poo.iloc[9:, 11:34] # stratigraphy section
 
+
         if not strat.empty:
+
             try:
                 strat = strat.dropna(how='all').reset_index(drop=True) # drop rows of all NaN
                 strat = strat.drop(columns=strat.columns[drop_cols]) # drop cols of all NaN
                 strat.columns = strat_cols # rename columns
-                strat_na = strat['bottom_cm'].isna().idxmax() # find ground
-                strat = strat.iloc[:strat_na, :] # truncate data frame to just stratigraphy
+                #strat_na = strat['bottom_cm'].isna().idxmax() # find ground
+                #strat = strat.iloc[:strat_na, :] # truncate data frame to just stratigraphy
 
                 # calculate swe from density or density from swe
                 if strat['swe_mm'].isna().all():
@@ -165,8 +166,7 @@ def pit_scrubber(pit_path, id):
                     pass
 
                 strat.loc[0, 'date'] = date
-
-                #strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
+                strat.to_csv(f'{export_path}/{pit_id}_strat.csv', index=False)
 
             except Exception as e:
                 error_lst.append([pit_path, id, e])
@@ -220,8 +220,8 @@ def pit_scrubber(pit_path, id):
 
         den = den.drop(columns='C_kgm-3')
 
-        #den.to_csv(f'{export_path}/{id}_den.csv', index=False)
-        den.to_csv(f'/Users/colemankane/Desktop/20250715_den_hs_for_stine/{pit_id}_den.csv', index=False)
+        den.to_csv(f'{export_path}/{id}_den.csv', index=False)
+        #den.to_csv(f'/Users/colemankane/Desktop/20250715_den_hs_for_stine/{pit_id}_den.csv', index=False)
 
         header = [
             pit_id,
@@ -243,7 +243,7 @@ def pit_scrubber(pit_path, id):
 
         header = pd.DataFrame([header], columns=header_cols)
         header.fillna(str('N/O'), inplace=True)
-        #header.to_csv(f'/Users/colemankane/Desktop/crrel_exports/{pit_id}_summary.csv', index=False)
+        header.to_csv(f'/Users/colemankane/Desktop/crrel_exports/{pit_id}_summary.csv', index=False)
 
 
 
@@ -256,10 +256,10 @@ def pit_scrubber(pit_path, id):
     return
 
 
-prac_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Colorado/Sites/AM/20250205/AM_20250205_pit.xlsx'
-prac_id = 'AM_20250205'
+prac_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Colorado/Sites/AM/20250409/AM_20250409_pit.xlsx'
+prac_id = 'AM_20250409'
 
-#pit_scrubber(prac_path, prac_id)
+pit_scrubber(prac_path, prac_id)
 
 
 

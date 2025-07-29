@@ -4,11 +4,11 @@ import os
 from pits import pit_scrubber
 #from ssa import ssa_scrubber
 #from ram import ram_scrubber
-#from matrix import matrix_scrubber, scope_list
+from matrix import matrix_scrubber, scope_list
 from transects import transect_scrubber
 
 
-state = ['Colorado']#, 'Idaho']
+state = ['Idaho']#, 'Idaho']
 data_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data'
 
 trans_end = ['HStransect.xlsx', 'HStransectA.xlsx', 'HStransectB.xlsx',
@@ -40,9 +40,12 @@ for state in state:
             date_dir = [i for i in os.listdir(file_path) if i != '.DS_Store']
 
 
-            matrix = [i for i in date_dir if i.endswith('_matrix.xlsx')]
+            matrix = [i for i in date_dir if (i.endswith('_matrix.xlsx'))]
+            matrix = [i for i in matrix if not i.startswith('~$')]
+
             if matrix:
-                matrix_lst.append([f'{file_path}/{matrix}', f'{site}_{date}'])
+                for mat in matrix:
+                    matrix_lst.append([f'{file_path}/{mat}', f'{site}_{date}'])
 
             pit = [i for i in date_dir if i.endswith('_pit.xlsx') or i.endswith('_pit_entry.xlsx')]
             if pit:
@@ -50,15 +53,19 @@ for state in state:
                     pit_lst.append([f'{file_path}/{pit}', f'{site}_{date}'])
 
             sram = [i for i in date_dir if i.endswith('_sram.xlsx')]
-
-            for s in sram:
-                sram_lst.append([f'{file_path}/{s}', f'{site}_{date}'])
+            sram = [i for i in sram if not i.startswith('~$')]
+            if sram:
+                for s in sram:
+                    sram_lst.append([f'{file_path}/{s}', f'{site}_{date}'])
 
             pram = [i for i in date_dir if i.endswith('_pram.xlsx')]
-            for p in pram:
-                pram_lst.append([f'{file_path}/{p}', f'{site}_{date}'])
+            pram = [i for i in pram if not i.startswith('~$')]
+            if pram:
+                for p in pram:
+                    pram_lst.append([f'{file_path}/{p}', f'{site}_{date}'])
 
             ssa = [i for i in date_dir if i.endswith('_SSA.xlsx')]
+            ssa = [i for i in ssa if not i.startswith('~$')]
             for x in ssa:
                 ssa_lst.append([f'{file_path}/{x}', f'{site}_{date}'])
 
@@ -76,7 +83,7 @@ for state in state:
 
 #pram_lst = [i for i in pram_lst if i]
 #ssa_lst = [i for i in ssa_lst if i]
-print(transect_lst)
+
 #transect_lst = [i for i in transect_lst if i]
     
 #for i in sram_lst:
@@ -88,14 +95,14 @@ print(transect_lst)
 #for i in matrix_lst:
 #    matrix_scrubber(i[0], i[1])
 
-#for i in pit_lst:
-#   pit_scrubber(i[0], i[1])
+for i in pit_lst:
+   pit_scrubber(i[0], i[1])
 
 #for i in ssa_lst:
 #    ssa_scrubber(i[0], i[1])
 
-for i in transect_lst:
-    transect_scrubber(i[0], i[1])
+#for i in transect_lst:
+#    transect_scrubber(i[0], i[1])
 
 #scope_list = pd.DataFrame(pd.concat(scope_list, ignore_index=True).tolist())
 #scope_list.to_csv('/Users/colemankane/Desktop/crrel_exports/scope_master_list.csv', index=False)

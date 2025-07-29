@@ -19,7 +19,7 @@ def matrix_scrubber(matrix_path, id):
     :param matrix_path: where to find matrix
     :return: none, exports to .csv's
     '''
-    #print(f'Scrubbing {matrix_path}, {id}...')
+    print(f'Scrubbing, {id}...')
     matrix = pd.read_excel(matrix_path,
                            skiprows=3,
                            na_values='None')
@@ -43,8 +43,8 @@ def matrix_scrubber(matrix_path, id):
         smp_profile = 'S' + smp_sn + 'M' + smp_pn + '.PNT'
         smp_profile = list(smp_profile)
 
-        #print(smp_profile)
         for i in range(len(smp_profile)):
+            print(smp_profile[i])
             p = smp.Profile.load(smp_path + smp_profile[i])
             grd = p.detect_ground()
             surf = p.detect_ground()
@@ -66,8 +66,8 @@ def matrix_scrubber(matrix_path, id):
             fscope_pn = fscope['Profile #'].astype(int).astype(str)
             scope_list.append('Profile' + fscope_pn + '_SN' + fscope_sn)
         except Exception as e:
-            print(f'failed at {id}: {e}')
-    else:
+            pass
+            #print(f'failed fscope at {id}: {e}')
         pass
 
 
@@ -94,7 +94,8 @@ def matrix_scrubber(matrix_path, id):
             scope_list.append('Profile' + scope_pn + '_SN' + scope_sn)
 
         except Exception as e:
-            print(f'error reading {matrix_path}: {e}')
+
+            print(f'error scope {matrix_path}: {e}')
 
     ##############################################
 
