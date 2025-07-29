@@ -101,7 +101,17 @@ def matrix_scrubber(matrix_path, id):
 
 
 
-    #scope.to_csv(f'{export_path}/{id}_scope.csv', index=False)
+    scope.to_csv(f'{export_path}/{id}_scope.csv', index=False)
 
 
 
+'''
+tsa_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Colorado/Sites/JPLMet/20250407/JPLMet_20250407_TS_A_matrix.xlsx'
+tsa_id = 'JPLMet_20240407_TS_A'
+
+tsb_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Colorado/Sites/JPLMet/20250407/JPLMet_20250407_TS_B_matrix.xlsx'
+tsb_id = 'JPLMet_20240407_TS_B'
+
+matrix_scrubber(tsa_path, tsa_id)
+matrix_scrubber(tsb_path, tsb_id)
+'''
