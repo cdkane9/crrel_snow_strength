@@ -34,6 +34,7 @@ def matrix_scrubber(matrix_path, id):
         return matrix[ix]
 
     ##############################################
+
     smp_ix = get_index('SMP')
     if not smp_ix.empty:
 
@@ -46,12 +47,12 @@ def matrix_scrubber(matrix_path, id):
         for i in range(len(smp_profile)):
             print(smp_profile[i])
             p = smp.Profile.load(smp_path + smp_profile[i])
-            grd = p.detect_ground()
+
             surf = p.detect_ground()
-            #p.export_derivatives(f'/Users/colemankane/Desktop/crrel_exports/smp_profiles/{smp_profile[i]}_derivatives.csv',
-            #                     precision=4, snowpack_only=True)
-            #p.export_samples(f'/Users/colemankane/Desktop/crrel_exports/smp_profiles/{smp_profile[i]}_samples.csv',
-            #                 precision=4, snowpack_only=True)
+            p.export_derivatives(f'/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit strength transect data/crrel_exports/smp_profiles_exports/{smp_profile[i]}_derivatives.csv',
+                                 precision=4, snowpack_only=True, parameterization='CR2020')
+            p.export_samples(f'/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit strength transect data/crrel_exports/smp_profiles_exports/{smp_profile[i]}_samples.csv',
+                             precision=4, snowpack_only=False)
         else:
             pass
 
@@ -60,7 +61,7 @@ def matrix_scrubber(matrix_path, id):
     fscope = get_index('Force_Scope').reset_index(drop=True)
 
     if not fscope.index.empty:
-        fscope.to_csv(f'{export_path}/{id}_fscope.csv', index=False)
+        #fscope.to_csv(f'{export_path}/{id}_fscope.csv', index=False)
         try:
             fscope_sn = fscope['SN'].astype(int).astype(str).str.zfill(5)
             fscope_pn = fscope['Profile #'].astype(int).astype(str)
@@ -76,10 +77,10 @@ def matrix_scrubber(matrix_path, id):
     ram_path = '/Users/colemankane/Desktop/crrel_exports/'
 
     fram = get_index('Force_Std_Ram')
-    if not fram.empty:
-        fram.to_csv(f'{export_path}/{id}_fram.csv', index=False)
-    else:
-        pass
+    #if not fram.empty:
+    #    fram.to_csv(f'{export_path}/{id}_fram.csv', index=False)
+    #else:
+    #    pass
 
 
     ##############################################
@@ -87,7 +88,7 @@ def matrix_scrubber(matrix_path, id):
 
     if not scope.index.empty:
         try:
-            scope.to_csv(f'{export_path}/{id}_scope.csv', index=False)
+            #scope.to_csv(f'{export_path}/{id}_scope.csv', index=False)
             scope_sn = scope['SN'].astype(int).astype(str).str.zfill(5)
             scope_sn = [s.replace('00114', '01114') for s in scope_sn]
             scope_pn = scope['Profile #'].astype(int).astype(str)
@@ -101,10 +102,10 @@ def matrix_scrubber(matrix_path, id):
 
 
 
-    scope.to_csv(f'{export_path}/{id}_scope.csv', index=False)
+    #scope.to_csv(f'{export_path}/{id}_scope.csv', index=False)
 
 
-
+print(scope_list)
 '''
 tsa_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Colorado/Sites/JPLMet/20250407/JPLMet_20250407_TS_A_matrix.xlsx'
 tsa_id = 'JPLMet_20240407_TS_A'
