@@ -8,9 +8,10 @@ pd.set_option('display.max_rows', None)
 data_dir = '/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit strength transect data/crrel_exports'
 smp_dir = '/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit strength transect data/crrel_exports/smp_profiles_exports'
 
-id_sites = ['FRE', 'BOG', 'BDG', 'PLT1', 'PLT2']
+id_sites = ['FRE', 'BOG', 'BDG', 'PLT1', 'PLT2', 'CCY']
 strat_files = [i for i in os.listdir(data_dir) if i.endswith('_strat.csv')]
 strat_files = [i for i in strat_files if i.startswith(tuple(id_sites))]
+
 
 for file in strat_files:
     print(file)
@@ -19,14 +20,16 @@ for file in strat_files:
 
     try:
         smp_mat = pd.read_csv(os.path.join(data_dir, smp_filename)) # read in file containing SMP profiles
+
         good_profs = smp_mat['Comments'].isna() # filters out profiles with errors/overloads
-        good_profs = smp_mat['Y-Coord'] == -30 # use only profiles 30cm away from pit wall
+        #good_profs = smp_mat['Y-Coord'] == -30 # use only profiles 30cm away from pit wall
         smp_mat = smp_mat[good_profs]
 
         smp_sn = smp_mat['SN'].astype(int).astype(str).str.zfill(2) # create filenames for SMP profiles
         smp_pn = smp_mat['Profile #'].astype(int).astype(str).str.zfill(4)
         smp_profs = 'S' + smp_sn + 'M' + smp_pn + '.PNT_derivatives.csv'
         smp_profs = list(smp_profs)
+
 
 
         strat = pd.read_csv(data_dir + '/' + file) # read in strat file
