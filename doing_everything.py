@@ -1,14 +1,14 @@
 import pandas as pd
 #import numpy as np
 import os
-from pits import pit_scrubber
+#from pits import pit_scrubber
 #from ssa import ssa_scrubber
 #from ram import ram_scrubber
-#from matrix import matrix_scrubber, scope_list
+from matrix import matrix_scrubber, scope_list
 #from transects import transect_scrubber
 
 
-state = ['Colorado']#, 'Idaho']
+state = ['Colorado', 'Idaho', 'Wyoming']#, 'Idaho']
 data_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data'
 
 trans_end = ['HStransect.xlsx', 'HStransectA.xlsx', 'HStransectB.xlsx',
@@ -77,7 +77,7 @@ for state in state:
 
 
 #do SMP before anything else
-#matrix_lst = [i for i in matrix_lst if i]
+matrix_lst = [i for i in matrix_lst if i]
 #pit_lst = [i for i in pit_lst if i]
 #sram_lst = [i for i in sram_lst if i]
 
@@ -92,11 +92,12 @@ for state in state:
 #for i in pram_lst:
 #    ram_scrubber(i[0], i[1])
 
-#for i in matrix_lst:
-#    matrix_scrubber(i[0], i[1])
+for i in matrix_lst:
+    matrix_scrubber(i[0], i[1])
 
-for i in pit_lst:
-   pit_scrubber(i[0], i[1])
+
+#for i in pit_lst:
+#   pit_scrubber(i[0], i[1])
 
 #for i in ssa_lst:
 #    ssa_scrubber(i[0], i[1])
@@ -105,4 +106,5 @@ for i in pit_lst:
 #    transect_scrubber(i[0], i[1])
 
 #scope_list = pd.DataFrame(pd.concat(scope_list, ignore_index=True).tolist())
+
 #scope_list.to_csv('/Users/colemankane/Desktop/crrel_exports/scope_master_list.csv', index=False)
