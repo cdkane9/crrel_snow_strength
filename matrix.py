@@ -7,6 +7,7 @@ import sys
 need to add something that checks if force is -1
 '''
 export_path = '/Users/colemankane/Desktop/crrel_exports'
+
 scope_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Snow_Scope/'
 all_scopes = os.listdir(scope_path)
 scope_list = []
@@ -38,7 +39,7 @@ def matrix_scrubber(matrix_path, id):
     smp_ix = get_index('SMP')
     if not smp_ix.empty:
 
-        smp_ix.to_csv(f'{export_path}/{id}_smp.csv', index=False)
+        #smp_ix.to_csv(f'{export_path}/{id}_smp.csv', index=False)
         smp_sn = smp_ix['SN'].astype(int).astype(str).str.zfill(2)
         smp_pn = smp_ix['Profile #'].astype(int).astype(str).str.zfill(4)
         smp_profile = 'S' + smp_sn + 'M' + smp_pn + '.PNT'
@@ -49,10 +50,14 @@ def matrix_scrubber(matrix_path, id):
             p = smp.Profile.load(smp_path + smp_profile[i])
 
             surf = p.detect_ground()
-            p.export_derivatives(f'/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit strength transect data/crrel_exports/smp_profiles_exports/{smp_profile[i]}_derivatives.csv',
-                                 precision=4, snowpack_only=True, parameterization='CR2020')
-            p.export_samples(f'/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit strength transect data/crrel_exports/smp_profiles_exports/{smp_profile[i]}_samples.csv',
-                             precision=4, snowpack_only=False)
+            #p.export_derivatives(f'/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit strength transect data/crrel_exports/smp_profiles_exports/{smp_profile[i]}_derivatives.csv',
+            #                     precision=4, snowpack_only=True, parameterization='CR2020')
+            p.export_derivatives(f'/Users/colemankane/Desktop/k2020a/{smp_profile[i]}_derivatives.csv',
+                               precision=4,
+                               snowpack_only=True,
+                               parameterization='K2020a')
+            #p.export_samples(f'/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit strength transect data/crrel_exports/smp_profiles_exports/{smp_profile[i]}_samples.csv',
+                             #precision=4, snowpack_only=False)
         else:
             pass
 
