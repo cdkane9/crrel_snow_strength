@@ -1,14 +1,14 @@
 import pandas as pd
 #import numpy as np
 import os
-#from pits import pit_scrubber
+from pits import pit_scrubber
 #from ssa import ssa_scrubber
 #from ram import ram_scrubber
 from matrix import matrix_scrubber, scope_list
 #from transects import transect_scrubber
 
 
-state = ['Colorado', 'Idaho', 'Wyoming']#, 'Idaho']
+state = ['Colorado']#, 'Idaho', 'Wyoming']#, 'Idaho']
 data_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data'
 
 trans_end = ['HStransect.xlsx', 'HStransectA.xlsx', 'HStransectB.xlsx',
@@ -27,13 +27,14 @@ transect_lst = []
 
 for state in state:
     state_path = data_path + f'/{state}/Sites'
-    state_dir = [i for i in os.listdir(state_path) if i != '.DS_Store']
+    #state_dir = [i for i in os.listdir(state_path) if i != '.DS_Store']
+    state_dir = ['JPLMet']
 
 
     for site in state_dir:
         site_path = state_path + f'/{site}'
-        site_dir = [i for i in os.listdir(site_path) if i != '.DS_Store']
-
+        #site_dir = [i for i in os.listdir(site_path) if i != '.DS_Store']
+        site_dir = ['20250407']
 
         for date in site_dir:
             file_path = site_path + f'/{date}'
@@ -77,7 +78,7 @@ for state in state:
 
 
 #do SMP before anything else
-matrix_lst = [i for i in matrix_lst if i]
+#matrix_lst = [i for i in matrix_lst if i]
 #pit_lst = [i for i in pit_lst if i]
 #sram_lst = [i for i in sram_lst if i]
 
@@ -92,12 +93,12 @@ matrix_lst = [i for i in matrix_lst if i]
 #for i in pram_lst:
 #    ram_scrubber(i[0], i[1])
 
-for i in matrix_lst:
-    matrix_scrubber(i[0], i[1])
+#for i in matrix_lst:
+#    matrix_scrubber(i[0], i[1])
 
 
-#for i in pit_lst:
-#   pit_scrubber(i[0], i[1])
+for i in pit_lst:
+   pit_scrubber(i[0], i[1])
 
 #for i in ssa_lst:
 #    ssa_scrubber(i[0], i[1])

@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 import os
 
-export_path = '/Users/colemankane/Desktop/crrel_exports'
-
+#export_path = '/Users/colemankane/Desktop/crrel_exports'
+export_path = '/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit strength transect data/crrel_exports'
 
 site_coords = {'BMO': [509875, 4817493, '12T'],
                'TPO': [559105, 4852195, '12T'],
@@ -128,8 +128,8 @@ def pit_scrubber(pit_path, id):
             perm_h = perm_h.dropna(how='all').reset_index(drop=True)
             perm = pd.concat([perm_h, perm], axis=1)
             perm.loc[0, 'SN'] = lwc_sn
-            print(lwc_sn)
-            perm.to_csv(f'/Users/colemankane/Desktop/perms/{pit_id}_perm.csv', index= False)
+            #print(lwc_sn)
+            #perm.to_csv(f'/Users/colemankane/Desktop/perms/{pit_id}_perm.csv', index= False)
 
         #pull out temp profile
         temp = poo.iloc[9:, 8:10]
@@ -145,7 +145,7 @@ def pit_scrubber(pit_path, id):
         if not temp.empty:
             temp = temp.reset_index(drop=True)
             temp.loc[0, 'date'] = date
-            temp.to_csv(f'{export_path}/{pit_id}_temp.csv', index=False)
+            #temp.to_csv(f'{export_path}/{pit_id}_temp.csv', index=False)
         else:
             pass
 
@@ -231,7 +231,7 @@ def pit_scrubber(pit_path, id):
 
         den = den.drop(columns='C_kgm-3')
 
-        #den.to_csv(f'{export_path}/{id}_den.csv', index=False)
+        den.to_csv(f'{export_path}/{pit_id}_den.csv', index=False)
         #den.to_csv(f'/Users/colemankane/Desktop/20250715_den_hs_for_stine/{pit_id}_den.csv', index=False)
 
         header = [
