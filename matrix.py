@@ -6,13 +6,15 @@ import sys
 '''
 need to add something that checks if force is -1
 '''
-export_path = '/Users/colemankane/Desktop/crrel_exports'
+export_path = '/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit_strength_transect data/crrel_exports'
 
 scope_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Snow_Scope/'
 all_scopes = os.listdir(scope_path)
 scope_list = []
 
 smp_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/SMP/'
+
+smp_surface = []
 
 def matrix_scrubber(matrix_path, id):
     '''
@@ -49,17 +51,29 @@ def matrix_scrubber(matrix_path, id):
             print(smp_profile[i])
             p = smp.Profile.load(smp_path + smp_profile[i])
 
-            surf = p.detect_ground()
-            #p.export_derivatives(f'/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit strength transect data/crrel_exports/smp_profiles_exports/{smp_profile[i]}_derivatives.csv',
-            #                     precision=4, snowpack_only=True, parameterization='CR2020')
-            p.export_derivatives(f'/Users/colemankane/Desktop/k2020a/{smp_profile[i]}_derivatives.csv',
-                               precision=4,
-                               snowpack_only=True,
-                               parameterization='K2020a')
-            #p.export_samples(f'/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit strength transect data/crrel_exports/smp_profiles_exports/{smp_profile[i]}_samples.csv',
-                             #precision=4, snowpack_only=False)
-        else:
-            pass
+            #p_surf = smp.detection.detect_surface(p)
+            #p.set_marker('surface', p_surf)
+
+            p_samps = p.samples
+
+            #smp_surface.append([smp_profile[i], p_surf])
+            #p_samps = p_samps[p_samps['distance'] > p_surf].reset_index(drop=True)
+            #p_samps['distance'] -= p_surf
+            #smp_export_path = os.path.join(export_path, 'smp_profiles_exports')
+            #p_samps.to_csv(f'{smp_export_path}/{smp_profile[i]}_samples.csv', index=False)
+            p_samps.to_csv(f'/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/My Drive/24_25_smp_exports/smp_profiles/{smp_profile[i]}_samples.csv', index=False)
+
+            p.export_derivatives(f'/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/My Drive/24_25_smp_exports/smp_profiles/{smp_profile[i]}_derivatives.csv',
+                                 precision=4, parameterization='CR2020', snowpack_only=False)
+            #p.export_derivatives(f'/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit_strength_transect data/crrel_exports/smp_profiles_exports/{smp_profile[i]}_derivatives.csv',
+            #                     precision=4, parameterization='CR2020')
+            #p.export_derivatives(f'/Users/colemankane/Desktop/k2020a/{smp_profile[i]}_derivatives.csv',
+            #                   precision=4,
+            #                   snowpack_only=True,
+            #                  parameterization='CR2020')
+            #p.export_samples(f'/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit_strength_transect data/crrel_exports/smp_profiles_exports/{smp_profile[i]}_samples.csv',
+                             #precision=4, snowpack_only=True)
+
 
 
     ##############################################
@@ -79,7 +93,7 @@ def matrix_scrubber(matrix_path, id):
 
     ##############################################
 
-    ram_path = '/Users/colemankane/Desktop/crrel_exports/'
+    #ram_path = '/Users/colemankane/Desktop/crrel_exports/'
 
     fram = get_index('Force_Std_Ram')
     #if not fram.empty:
@@ -110,7 +124,7 @@ def matrix_scrubber(matrix_path, id):
     #scope.to_csv(f'{export_path}/{id}_scope.csv', index=False)
 
 
-print(scope_list)
+#print(scope_list)
 '''
 tsa_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Colorado/Sites/JPLMet/20250407/JPLMet_20250407_TS_A_matrix.xlsx'
 tsa_id = 'JPLMet_20240407_TS_A'

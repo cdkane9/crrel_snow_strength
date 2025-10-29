@@ -5,11 +5,12 @@ import os
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
-data_dir = '/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit strength transect data/crrel_exports'
-smp_dir = '/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit strength transect data/crrel_exports/smp_profiles_exports'
+strat_dir = '/Users/colemankane/Desktop/crrel_exports'
+exp_dir = '/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit_strength_transect data/crrel_exports'
+smp_dir = '/Users/colemankane/Library/CloudStorage/GoogleDrive-ColemanKane@boisestate.edu/Shared drives/2024-2025 CRREL Snow Strength/Data/Scrubbed pit_strength_transect data/crrel_exports/smp_profiles_exports'
 
 id_sites = ['FRE', 'BOG', 'BDG', 'PLT1', 'PLT2', 'CCY']
-strat_files = [i for i in os.listdir(data_dir) if i.endswith('_strat.csv')]
+strat_files = [i for i in os.listdir(strat_dir) if i.endswith('_strat.csv')]
 strat_files = [i for i in strat_files if i.startswith(tuple(id_sites))]
 
 
@@ -19,7 +20,7 @@ for file in strat_files:
     smp_filename = id + '_smp.csv'
 
     try:
-        smp_mat = pd.read_csv(os.path.join(data_dir, smp_filename)) # read in file containing SMP profiles
+        smp_mat = pd.read_csv(os.path.join(strat_dir, smp_filename)) # read in file containing SMP profiles
 
         good_profs = smp_mat['Comments'].isna() # filters out profiles with errors/overloads
         #good_profs = smp_mat['Y-Coord'] == -30 # use only profiles 30cm away from pit wall
@@ -32,7 +33,7 @@ for file in strat_files:
 
 
 
-        strat = pd.read_csv(data_dir + '/' + file) # read in strat file
+        strat = pd.read_csv(strat_dir + '/' + file) # read in strat file
 
         bottom = strat.index[strat['bottom_cm'] == 0][0] # find the bottom of the stratigraphy profile
         strat = strat.loc[:bottom]
@@ -81,7 +82,7 @@ for file in strat_files:
 
 
 
-        strat.to_csv(data_dir + '/' + file, index=False)
+        strat.to_csv(exp_dir + '/' + file, index=False)
 
 
     except Exception as e:
