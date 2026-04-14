@@ -267,10 +267,10 @@ def pit_scrubber(pit_path, id):
     return
 
 
-prac_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Colorado/Sites/AM/20250409/AM_20250409_pit.xlsx'
-prac_id = 'AM_20250409'
+#prac_path = '/Users/colemankane/Documents/BSU/CRREL Snow Strength/field_data/Colorado/Sites/AM/20250409/AM_20250409_pit.xlsx'
+#prac_id = 'AM_20250409'
 
-pit_scrubber(prac_path, prac_id)
+#pit_scrubber(prac_path, prac_id)
 
 
 

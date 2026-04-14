@@ -20,11 +20,18 @@ def ssa_scrubber(ssa_path, id):
         ssa_df.loc[ssa_df['SSA.2'].notna(), 'SSA.2'] = np.nan
 
         # find and read in associated density profile
+        ##########################################################################################
+        '''CHANGE PATH TO DENSITY FILE'''
+        ##########################################################################################
         den_path = f'/Users/colemankane/Desktop/crrel_exports/{id}_den.csv'
         den = pd.read_csv(den_path)
 
         # read in look up table (provided by SLF)
         # given density and reflectance, calculates SSA
+
+        ##########################################################################################
+        '''CHANGE PATH TO LOOK-UP TABLE'''
+        ##########################################################################################
         table = np.genfromtxt('/Users/colemankane/Documents/BSU/CRREL Snow Strength/snow_strength_cleaning/lookUpTabFRED.txt', delimiter=',', skip_header=0, encoding='utf-8')
 
         # calculate average density at each height
@@ -166,6 +173,10 @@ def ssa_scrubber(ssa_path, id):
                 )
 
         ssa_ar = pd.DataFrame(conv_ssa, columns=cols)
+
+        ##########################################################################################
+        '''CHANGE EXPORT PATH'''
+        ##########################################################################################
         ssa_ar.to_csv(f'/Users/colemankane/Desktop/crrel_exports/{id}_ssa.csv', index=False)
 
     else:
